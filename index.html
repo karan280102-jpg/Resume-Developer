@@ -632,7 +632,7 @@
       'Respond with ONLY valid JSON in exactly this shape:\n' +
       '{"match_score": number, "tailored_score": number, "matched_keywords": [string], "missing_keywords": [string], "tailored_resume": {"headline": string, "sections": [{"title": string, "style": "paragraph"|"bullets"|"tags", "content": [string]}]}}\n\n' +
       'For "style": use "paragraph" for a summary/objective (content is a single-element array with the paragraph text), "bullets" for a list of bullet lines (each array element is one bullet, and if a section has multiple roles/entries, prefix each role\'s first bullet with its title/company/dates as its own bullet line), and "tags" for a short list of standalone items like a skills line (each array element is one item).\n' +
-      'Keep it concise: at most 8 sections, at most 6 lines of content per section, at most 8 keywords per list.';
+      'Keep it concise: at most 6 sections, at most 5 lines of content per section, at most 8 keywords per list.';
 
     async function callModel(model){
       const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent';
@@ -650,7 +650,7 @@
             ]
           }],
           generationConfig: {
-            maxOutputTokens: 2048,
+            maxOutputTokens: 4096,
             responseMimeType: 'application/json'
           }
         })
@@ -669,7 +669,10 @@
       }
       const candidate = data.candidates && data.candidates[0];
       if(!candidate) throw new Error('NO_CANDIDATE: ' + JSON.stringify(data).slice(0,250));
-      if(candidate.finishReason && candidate.finishReason !== 'STOP' && candidate.finishReason !== 'MAX_TOKENS'){
+      if(candidate.finishReason === 'MAX_TOKENS'){
+        throw new Error('TRUNCATED: the response was cut off before it finished');
+      }
+      if(candidate.finishReason && candidate.finishReason !== 'STOP'){
         throw new Error('BLOCKED: model stopped early, reason=' + candidate.finishReason);
       }
       const parts = (candidate.content && candidate.content.parts) || [];
@@ -730,7 +733,9 @@
     fitBtn.disabled = false;
     const raw = (lastErr && lastErr.message) ? lastErr.message : String(lastErr);
     const low = raw.toLowerCase();
-    if(low.includes('quota')){
+    if(low.includes('truncated')){
+      showError("The AI's answer got cut off before it finished — usually happens with a longer resume or a job posting with a lot of text. Please try again; if it keeps happening, try a shorter CV PDF.");
+    }else if(low.includes('quota')){
       showError("Hit today's free quota on this key. Wait a bit and try again, or use a different free key. (" + raw + ")");
     }else if(low.startsWith('key:')){
       showError("That API key wasn't accepted. Double-check it was copied in full from Google AI Studio. (" + raw + ")");
