@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fitted — resume tailoring, cut to the job</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EFEDE3;
+    --paper-2:#E6E2D3;
+    --ink:#20262E;
+    --ink-soft:#454E58;
+    --brass:#A6793C;
+    --brass-dark:#8A6431;
+    --thread:#7B3B44;
+    --chalk:#4F7286;
+    --line:#C7C1AC;
+    --white:#FBFAF6;
+    --radius:2px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+  .app{max-width:1120px;margin:0 auto;padding:0 24px 64px;}
+
+  /* focus visibility */
+  button:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline:2px solid var(--chalk);
+    outline-offset:2px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+
+  /* ---------- Masthead ---------- */
+  .masthead{
+    padding:56px 0 36px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:40px;
+  }
+  .mark{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--brass-dark);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:18px;
+  }
+  .mark::before{
+    content:"";
+    width:22px;height:1px;
+    background:var(--brass);
+    display:inline-block;
+  }
+  h1{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:700;
+    font-size:clamp(32px,4.5vw,52px);
+    line-height:1.06;
+    letter-spacing:-0.01em;
+    margin:0 0 14px;
+    max-width:780px;
+  }
+  h1 em{
+    font-style:normal;
+    color:var(--brass-dark);
+  }
+  .tag{
+    font-size:16px;
+    color:var(--ink-soft);
+    max-width:480px;
+    margin:0;
+  }
+
+  /* ---------- Workbench layout ---------- */
+  .workbench{
+    display:grid;
+    grid-template-columns:1fr 34px 1.15fr;
+    align-items:start;
+  }
+  @media (max-width:860px){
+    .workbench{grid-template-columns:1fr;}
+    .stitch-divider.vertical{display:none;}
+  }
+
+  .stage-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--brass-dark);
+    margin-bottom:18px;
+  }
+
+  /* ---------- Stitch dividers ---------- */
+  .stitch-divider{
+    height:1px;
+    margin:22px 0;
+    background-image:repeating-linear-gradient(to right, var(--line) 0 6px, transparent 6px 12px);
+  }
+  .stitch-divider.vertical{
+    width:1px;height:100%;margin:0;align-self:stretch;
+    background-image:repeating-linear-gradient(to bottom, var(--line) 0 6px, transparent 6px 12px);
+  }
+
+  /* ---------- Intake ---------- */
+  .intake{padding-top:2px;}
+  .dropzone{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px;
+    position:relative;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .dropzone.drag{border-color:var(--brass); background:#FFFDF7;}
+  .dropzone.filled{border-color:var(--chalk);}
+  .dz-content{text-align:center;padding:14px 0;}
+  .dz-icon{font-size:22px; display:block; margin-bottom:8px; opacity:.75;}
+  .dz-content p{margin:0 0 12px; font-size:14px; color:var(--ink-soft);}
+  .dz-btn{
+    font-family:'Inter',sans-serif;
+    font-size:13px; font-weight:600;
+    background:var(--ink);
+    color:var(--white);
+    border:none;
+    padding:9px 18px;
+    border-radius:var(--radius);
+    cursor:pointer;
+  }
+  .dz-btn:hover{background:var(--ink-soft);}
+  .dz-alt{margin-top:12px !important; font-size:13px;}
+  .link-btn{
+    background:none;border:none;padding:0;
+    color:var(--chalk); text-decoration:underline;
+    font-size:13px; cursor:pointer; font-family:inherit;
+  }
+  .paste-area{
+    width:100%; min-height:140px; margin-top:6px;
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    border:1px solid var(--line); border-radius:var(--radius);
+    padding:12px; resize:vertical; background:var(--paper);
+    color:var(--ink);
+  }
+  .dz-filename{
+    margin-top:10px; font-family:'IBM Plex Mono',monospace;
+    font-size:12px; color:var(--chalk); text-align:center; word-break:break-all;
+  }
+  .jd-preview{
+    max-width:100%; max-height:180px; display:block;
+    margin:8px auto 0; border-radius:var(--radius); border:1px solid var(--line);
+  }
+
+  .fit-btn{
+    width:100%; margin-top:24px;
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:700; font-size:16px;
+    background:var(--brass); color:var(--white);
+    border:none; padding:15px; border-radius:var(--radius);
+    cursor:pointer; letter-spacing:.01em;
+    transition:background .15s ease, opacity .15s ease;
+  }
+  .fit-btn:hover:not(:disabled){background:var(--brass-dark);}
+  .fit-btn:disabled{background:#CFC9B8; color:#8B8672; cursor:not-allowed;}
+
+  .error-msg{
+    margin-top:14px; font-size:13.5px; color:var(--thread);
+    background:#F7ECE9; border:1px solid #E3C6C4; border-radius:var(--radius);
+    padding:10px 12px;
+  }
+
+  .key-field{
+    background:var(--white); border:1px solid var(--line); border-radius:var(--radius);
+    padding:14px 16px; margin-bottom:18px;
+  }
+  .key-field label{
+    display:block; font-family:'IBM Plex Mono',monospace; font-size:11px;
+    text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft); margin-bottom:8px;
+  }
+  .key-field input{
+    width:100%; font-family:'IBM Plex Mono',monospace; font-size:13px;
+    padding:9px 10px; border:1px solid var(--line); border-radius:var(--radius);
+    background:var(--paper); color:var(--ink);
+  }
+  .key-field .key-help{
+    margin:8px 0 0; font-size:12px; color:var(--ink-soft);
+  }
+  .key-field .key-help a{ color:var(--chalk); }
+
+  /* ---------- Output ---------- */
+  .output{min-height:400px;}
+  .empty-state{
+    border:1px dashed var(--line); border-radius:var(--radius);
+    padding:48px 24px; text-align:center; color:var(--ink-soft); font-size:14px;
+  }
+
+  .loading-state{padding:60px 24px; text-align:center;}
+  .tape{
+    width:100%; max-width:320px; height:6px; margin:0 auto 18px;
+    background:var(--paper-2); border-radius:3px; overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .tape-fill{
+    height:100%; width:0%; background:var(--brass);
+    transition:width .4s ease;
+  }
+  #loadingText{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--ink-soft);}
+
+  .result{}
+
+  /* score gauge — tailor's tape */
+  .score-block{
+    background:var(--white); border:1px solid var(--line); border-radius:var(--radius);
+    padding:22px 22px 18px; margin-bottom:22px;
+  }
+  .tape-gauge{position:relative; height:46px; margin-top:6px;}
+  .tape-gauge .ruler{
+    position:absolute; left:0; right:0; top:24px; height:2px; background:var(--paper-2);
+  }
+  .tape-gauge .tick{
+    position:absolute; top:18px; width:1px; height:8px; background:var(--line);
+  }
+  .tape-gauge .tick-label{
+    position:absolute; top:28px; transform:translateX(-50%);
+    font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ink-soft);
+  }
+  .tape-gauge .pin{
+    position:absolute; top:0; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center;
+    transition:left .6s cubic-bezier(.2,.8,.2,1);
+  }
+  .tape-gauge .pin .num{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:15px;
+    color:var(--brass-dark); margin-bottom:2px;
+  }
+  .tape-gauge .pin .dot{
+    width:9px; height:9px; border-radius:50%; background:var(--brass);
+    border:2px solid var(--white); box-shadow:0 0 0 1px var(--brass);
+  }
+  .tape-gauge .pin.before .num{ color:var(--ink-soft); font-weight:500; }
+  .tape-gauge .pin.before .dot{
+    background:var(--chalk); box-shadow:0 0 0 1px var(--chalk);
+  }
+  .score-label .delta{
+    color:#3E6B52; font-family:'IBM Plex Mono',monospace; font-weight:600;
+    margin-left:6px;
+  }
+  .score-label{
+    margin-top:14px; font-size:12.5px; color:var(--ink-soft);
+    font-family:'IBM Plex Mono',monospace; letter-spacing:.04em; text-transform:uppercase;
+  }
+
+  .keywords{
+    display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;
+  }
+  @media (max-width:520px){.keywords{grid-template-columns:1fr;}}
+  .kw-group{
+    background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:16px;
+  }
+  .kw-group h3{
+    margin:0 0 10px; font-family:'IBM Plex Mono',monospace; font-size:11px;
+    text-transform:uppercase; letter-spacing:.1em; color:var(--ink-soft); font-weight:600;
+  }
+  .chips{display:flex; flex-wrap:wrap; gap:6px;}
+  .chip{
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px;
+    padding:4px 9px; border-radius:20px; white-space:nowrap;
+  }
+  .matched .chip{background:#EAF0EC; color:#3E6B52; border:1px solid #C9DBCD;}
+  .missing .chip{background:#F7ECE9; color:var(--thread); border:1px solid #E3C6C4;}
+
+  .resume-sheet{
+    background:var(--white); border:1px solid var(--line); border-radius:var(--radius);
+    padding:36px 40px; margin-bottom:22px;
+  }
+  .resume-sheet h2{
+    font-family:'Bricolage Grotesque',sans-serif; font-size:22px; margin:0 0 4px;
+  }
+  .resume-sheet .rs-summary{color:var(--ink-soft); font-size:14.5px; margin:0 0 20px; max-width:640px;}
+  .resume-sheet h4{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase;
+    letter-spacing:.1em; color:var(--brass-dark); margin:22px 0 10px;
+    border-bottom:1px solid var(--line); padding-bottom:6px;
+  }
+  .rs-skills{display:flex; flex-wrap:wrap; gap:6px 10px; font-size:13.5px; color:var(--ink);}
+  .rs-skills span::after{content:"·"; margin-left:10px; color:var(--line);}
+  .rs-skills span:last-child::after{content:"";}
+  .rs-role{margin-bottom:16px;}
+  .rs-role-head{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; font-size:14.5px;}
+  .rs-role-title{font-weight:600;}
+  .rs-role-meta{color:var(--ink-soft); font-family:'IBM Plex Mono',monospace; font-size:12px;}
+  .rs-role ul{margin:8px 0 0; padding-left:18px; font-size:13.5px; color:var(--ink);}
+  .rs-role li{margin-bottom:4px;}
+  .rs-edu{font-size:13.5px;}
+  .rs-edu div{margin-bottom:4px;}
+
+  .actions{display:flex; gap:10px; flex-wrap:wrap;}
+  .action-btn{
+    font-family:'Inter',sans-serif; font-weight:600; font-size:13.5px;
+    padding:11px 18px; border-radius:var(--radius); cursor:pointer;
+    border:1px solid var(--ink); background:var(--white); color:var(--ink);
+  }
+  .action-btn.primary{background:var(--ink); color:var(--white);}
+  .action-btn:hover{opacity:.85;}
+
+  .foot-note{
+    margin-top:54px; padding-top:20px; border-top:1px solid var(--line);
+    font-size:12.5px; color:var(--ink-soft);
+  }
+
+  @media print{
+    body *{visibility:hidden;}
+    .resume-sheet, .resume-sheet *{visibility:visible;}
+    .resume-sheet{position:absolute; left:0; top:0; width:100%; border:none; padding:0;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="masthead">
+    <div class="mark">Fitted</div>
+    <h1>Cut your CV to <em>this</em> job, not the last one.</h1>
+    <p class="tag">Drop your current resume and a photo of the job posting. Get a version fitted to it — free, no account.</p>
+  </header>
+
+  <main class="workbench">
+    <section class="intake" id="intakeSection">
+      <div class="stage-label">— Cut, bring your materials</div>
+
+      <div class="key-field">
+        <label for="apiKeyInput">Gemini API key (free)</label>
+        <input type="password" id="apiKeyInput" placeholder="Paste your free Gemini API key here" autocomplete="off" />
+        <p class="key-help">Get one free at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> — it stays in your browser for this session only, and is sent only to Google.</p>
+      </div>
+
+      <div class="dropzone" id="cvDrop">
+        <input type="file" id="cvInput" accept="application/pdf" hidden />
+        <div class="dz-content" id="cvDzContent">
+          <span class="dz-icon">&#128196;</span>
+          <p>Drop your current CV (PDF)</p>
+          <button type="button" class="dz-btn" id="cvChooseBtn">Choose file</button>
+          <p class="dz-alt">Or <button type="button" id="pasteToggle" class="link-btn">paste resume text instead</button></p>
+        </div>
+        <textarea id="cvPasteArea" class="paste-area" hidden placeholder="Paste your resume text here..."></textarea>
+        <div class="dz-filename" id="cvFileName"></div>
+      </div>
+
+      <div class="stitch-divider" aria-hidden="true"></div>
+
+      <div class="dropzone" id="jdDrop">
+        <input type="file" id="jdInput" accept="image/*" hidden />
+        <div class="dz-content" id="jdDzContent">
+          <span class="dz-icon">&#128247;</span>
+          <p>Drop a photo of the job description</p>
+          <button type="button" class="dz-btn" id="jdChooseBtn">Choose photo</button>
+        </div>
+        <img id="jdPreview" class="jd-preview" hidden alt="Job description preview" />
+        <div class="dz-filename" id="jdFileName"></div>
+      </div>
+
+      <button id="fitBtn" class="fit-btn" disabled>Fit my resume</button>
+      <p id="errorMsg" class="error-msg" hidden></p>
+    </section>
+
+    <div class="stitch-divider vertical" aria-hidden="true"></div>
+
+    <section class="output">
+      <div class="stage-label">— Finish, your fitted resume</div>
+
+      <div class="empty-state" id="emptyState">
+        Nothing on the table yet. Add your CV and a job photo on the left, then press "Fit my resume."
+      </div>
+
+      <div class="loading-state" id="loadingState" hidden>
+        <div class="tape"><div class="tape-fill" id="tapeFill"></div></div>
+        <p id="loadingText">Reading the job posting…</p>
+      </div>
+
+      <div class="result" id="resultState" hidden>
+        <div class="score-block">
+          <div class="tape-gauge" id="tapeGauge"></div>
+          <div class="score-label">Match to this job, before tailoring</div>
+        </div>
+
+        <div class="keywords">
+          <div class="kw-group matched">
+            <h3>Already fits</h3>
+            <div class="chips" id="matchedChips"></div>
+          </div>
+          <div class="kw-group missing">
+            <h3>Worth adding, if true</h3>
+            <div class="chips" id="missingChips"></div>
+          </div>
+        </div>
+
+        <article class="resume-sheet" id="resumeSheet"></article>
+
+        <div class="actions">
+          <button id="downloadBtn" class="action-btn primary">Download as PDF</button>
+          <button id="copyBtn" class="action-btn">Copy resume text</button>
+          <button id="restartBtn" class="action-btn">Start a new fit</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot-note">
+    Free to use, powered by Google's free Gemini API. Your CV and the job photo are sent only to Google to generate this result — nothing is stored or saved anywhere, and your API key never leaves your browser.
+  </footer>
+</div>
+
+<script>
+(function(){
+  const state = { cvText:'', jdBase64:'', jdMediaType:'', usingPaste:false, lastParsed:null, apiKey:'' };
+  const apiKeyInput = document.getElementById('apiKeyInput');
+  apiKeyInput.addEventListener('input', () => { state.apiKey = apiKeyInput.value.trim(); updateFitEnabled(); });
+
+  const cvInput = document.getElementById('cvInput');
+  const cvChooseBtn = document.getElementById('cvChooseBtn');
+  const cvDrop = document.getElementById('cvDrop');
+  const cvFileName = document.getElementById('cvFileName');
+  const cvPasteArea = document.getElementById('cvPasteArea');
+  const pasteToggle = document.getElementById('pasteToggle');
+  const cvDzContent = document.getElementById('cvDzContent');
+
+  const jdInput = document.getElementById('jdInput');
+  const jdChooseBtn = document.getElementById('jdChooseBtn');
+  const jdDrop = document.getElementById('jdDrop');
+  const jdFileName = document.getElementById('jdFileName');
+  const jdPreview = document.getElementById('jdPreview');
+  const jdDzContent = document.getElementById('jdDzContent');
+
+  const fitBtn = document.getElementById('fitBtn');
+  const errorMsg = document.getElementById('errorMsg');
+
+  const emptyState = document.getElementById('emptyState');
+  const loadingState = document.getElementById('loadingState');
+  const resultState = document.getElementById('resultState');
+  const tapeFill = document.getElementById('tapeFill');
+  const loadingText = document.getElementById('loadingText');
+
+  function showError(msg){
+    errorMsg.textContent = msg;
+    errorMsg.hidden = false;
+  }
+  function clearError(){ errorMsg.hidden = true; }
+
+  function updateFitEnabled(){
+    fitBtn.disabled = !(state.cvText.trim().length > 20 && state.jdBase64 && state.apiKey.length > 10);
+  }
+
+  // ---------- PDF.js loading ----------
+  let pdfjsPromise = null;
+  function ensurePdfJs(){
+    if(pdfjsPromise) return pdfjsPromise;
+    pdfjsPromise = new Promise((resolve, reject) => {
+      if(window.pdfjsLib) return resolve();
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      script.onload = () => {
+        try{
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+          resolve();
+        }catch(e){ reject(e); }
+      };
+      script.onerror = () => reject(new Error('pdf reader failed to load'));
+      document.head.appendChild(script);
+    });
+    return pdfjsPromise;
+  }
+
+  async function extractPdfText(file){
+    await ensurePdfJs();
+    const buf = await file.arrayBuffer();
+    const pdf = await window.pdfjsLib.getDocument({ data: buf }).promise;
+    let text = '';
+    for(let i=1;i<=pdf.numPages;i++){
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      text += content.items.map(it => it.str).join(' ') + '\n';
+    }
+    return text.trim();
+  }
+
+  // ---------- CV dropzone ----------
+  cvChooseBtn.addEventListener('click', () => cvInput.click());
+  cvDrop.addEventListener('click', (e) => { if(e.target === cvDrop) cvInput.click(); });
+  ['dragover','dragenter'].forEach(evt => cvDrop.addEventListener(evt, e => { e.preventDefault(); cvDrop.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(evt => cvDrop.addEventListener(evt, e => { e.preventDefault(); cvDrop.classList.remove('drag'); }));
+  cvDrop.addEventListener('drop', e => {
+    if(e.dataTransfer.files && e.dataTransfer.files[0]) handleCvFile(e.dataTransfer.files[0]);
+  });
+  cvInput.addEventListener('change', () => { if(cvInput.files[0]) handleCvFile(cvInput.files[0]); });
+
+  async function handleCvFile(file){
+    clearError();
+    if(file.type !== 'application/pdf'){
+      showError('That file is not a PDF. Choose a PDF, or paste your resume text instead.');
+      return;
+    }
+    cvFileName.textContent = 'Reading ' + file.name + '…';
+    try{
+      const text = await extractPdfText(file);
+      if(text.length < 20){
+        showError("Couldn't find readable text in that PDF — it may be a scanned image. Try pasting your resume text instead.");
+        cvFileName.textContent = '';
+        return;
+      }
+      state.cvText = text;
+      cvFileName.textContent = 'Using ' + file.name + ' (' + text.length + ' characters read)';
+      cvDrop.classList.add('filled');
+      updateFitEnabled();
+    }catch(err){
+      console.error(err);
+      showError("Couldn't read that PDF. Try another file, or paste your resume text instead.");
+      cvFileName.textContent = '';
+    }
+  }
+
+  pasteToggle.addEventListener('click', () => {
+    state.usingPaste = !state.usingPaste;
+    cvPasteArea.hidden = !state.usingPaste;
+    cvDzContent.style.display = state.usingPaste ? 'none' : 'block';
+    pasteToggle.parentElement.style.display = state.usingPaste ? 'none' : 'block';
+    if(state.usingPaste){
+      const back = document.createElement('button');
+      back.type = 'button';
+      back.className = 'link-btn';
+      back.textContent = 'Upload a PDF instead';
+      back.style.marginTop = '8px';
+      back.addEventListener('click', () => {
+        state.usingPaste = false;
+        cvPasteArea.hidden = true;
+        cvDzContent.style.display = 'block';
+        pasteToggle.parentElement.style.display = 'block';
+        back.remove();
+        cvFileName.textContent = '';
+      }, { once:true });
+      cvPasteArea.insertAdjacentElement('afterend', back);
+      cvPasteArea.focus();
+    }
+  });
+  cvPasteArea.addEventListener('input', () => {
+    state.cvText = cvPasteArea.value;
+    cvDrop.classList.toggle('filled', state.cvText.trim().length > 20);
+    updateFitEnabled();
+  });
+
+  // ---------- JD dropzone ----------
+  jdChooseBtn.addEventListener('click', () => jdInput.click());
+  jdDrop.addEventListener('click', (e) => { if(e.target === jdDrop) jdInput.click(); });
+  ['dragover','dragenter'].forEach(evt => jdDrop.addEventListener(evt, e => { e.preventDefault(); jdDrop.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(evt => jdDrop.addEventListener(evt, e => { e.preventDefault(); jdDrop.classList.remove('drag'); }));
+  jdDrop.addEventListener('drop', e => {
+    if(e.dataTransfer.files && e.dataTransfer.files[0]) handleJdFile(e.dataTransfer.files[0]);
+  });
+  jdInput.addEventListener('change', () => { if(jdInput.files[0]) handleJdFile(jdInput.files[0]); });
+
+  function handleJdFile(file){
+    clearError();
+    if(!file.type.startsWith('image/')){
+      showError('That is not an image. Choose a photo or screenshot of the job posting.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      const [meta, b64] = result.split(',');
+      state.jdBase64 = b64;
+      state.jdMediaType = file.type;
+      jdPreview.src = result;
+      jdPreview.hidden = false;
+      jdFileName.textContent = 'Using ' + file.name;
+      jdDrop.classList.add('filled');
+      updateFitEnabled();
+    };
+    reader.onerror = () => showError("Couldn't read that photo. Try another file.");
+    reader.readAsDataURL(file);
+  }
+
+  // ---------- Fit ----------
+  fitBtn.addEventListener('click', fitResume);
+
+  function showLoading(){
+    emptyState.hidden = true;
+    resultState.hidden = true;
+    loadingState.hidden = false;
+    tapeFill.style.width = '10%';
+    const msgs = ['Reading the job posting…','Comparing it to your resume…','Fitting the language to the role…'];
+    let i = 0;
+    loadingText.textContent = msgs[0];
+    tapeFill.style.width = '30%';
+    window._fitInterval = setInterval(() => {
+      i = (i+1) % msgs.length;
+      loadingText.textContent = msgs[i];
+      tapeFill.style.width = (30 + i*30) + '%';
+    }, 1800);
+  }
+  function stopLoading(){
+    clearInterval(window._fitInterval);
+    tapeFill.style.width = '100%';
+  }
+
+  async function fitResume(){
+    clearError();
+    showLoading();
+    fitBtn.disabled = true;
+
+    const prompt = 'You are an expert resume writer and ATS specialist. Below is a candidate\'s current resume text, and attached is a photo of a job posting they want to apply to.\n\n' +
+      'CANDIDATE RESUME TEXT:\n"""\n' + state.cvText.slice(0, 6000) + '\n"""\n\n' +
+      'Read the job posting in the photo carefully. Then:\n' +
+      '1. Identify the role title, key responsibilities, and required skills from the photo.\n' +
+      '2. Look at the ORIGINAL resume\'s own structure: what sections it has, in what order, with what exact heading wording, and whether each section is written as a paragraph, a bulleted list, or a short tag-like list (e.g. a skills line). Keep that exact same structure and order in your output — do not add sections that weren\'t there, remove sections that were there, or reorder them.\n' +
+      '3. Within that same structure, ONLY change the wording: rephrase bullets and the summary to foreground what matches this job, and re-prioritize which real skills/details are mentioned first. Never invent employers, titles, dates, or accomplishments not present in the original resume text, and never introduce a new section type the original didn\'t have.\n' +
+      '4. Score how well the ORIGINAL resume (before any tailoring) matches this job, 0-100.\n' +
+      '5. Score how well YOUR TAILORED version matches this job, 0-100. This should usually be higher than the original score, since it is more targeted.\n' +
+      '6. List keywords/skills from the posting already reflected in the resume, and ones that seem missing.\n\n' +
+      'Respond with ONLY valid JSON in exactly this shape:\n' +
+      '{"match_score": number, "tailored_score": number, "matched_keywords": [string], "missing_keywords": [string], "tailored_resume": {"headline": string, "sections": [{"title": string, "style": "paragraph"|"bullets"|"tags", "content": [string]}]}}\n\n' +
+      'For "style": use "paragraph" for a summary/objective (content is a single-element array with the paragraph text), "bullets" for a list of bullet lines (each array element is one bullet, and if a section has multiple roles/entries, prefix each role\'s first bullet with its title/company/dates as its own bullet line), and "tags" for a short list of standalone items like a skills line (each array element is one item).\n' +
+      'Keep it concise: at most 8 sections, at most 6 lines of content per section, at most 8 keywords per list.';
+
+    async function callModel(model){
+      const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent';
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': state.apiKey
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              { inline_data: { mime_type: state.jdMediaType, data: state.jdBase64 } },
+              { text: prompt }
+            ]
+          }],
+          generationConfig: {
+            maxOutputTokens: 2048,
+            responseMimeType: 'application/json'
+          }
+        })
+      });
+      let data;
+      try{ data = await response.json(); }
+      catch(e){ throw new Error('BAD_RESPONSE: server sent HTTP ' + response.status + ' with no readable JSON'); }
+
+      if(data.error){
+        const code = data.error.code;
+        const msg = data.error.message || ('HTTP ' + response.status);
+        if(code === 429) throw new Error('QUOTA: ' + msg);
+        if(code === 401 || code === 403) throw new Error('KEY: ' + msg);
+        if(code === 404) throw new Error('MODEL_NOT_FOUND: ' + msg);
+        throw new Error('API_ERROR ' + code + ': ' + msg);
+      }
+      const candidate = data.candidates && data.candidates[0];
+      if(!candidate) throw new Error('NO_CANDIDATE: ' + JSON.stringify(data).slice(0,250));
+      if(candidate.finishReason && candidate.finishReason !== 'STOP' && candidate.finishReason !== 'MAX_TOKENS'){
+        throw new Error('BLOCKED: model stopped early, reason=' + candidate.finishReason);
+      }
+      const parts = (candidate.content && candidate.content.parts) || [];
+      const textOut = parts.map(p => p.text || '').join('\n').trim();
+      if(!textOut) throw new Error('EMPTY_RESPONSE: model returned no text');
+      const clean = textOut.replace(/```json|```/g,'').trim();
+      try{
+        return JSON.parse(clean);
+      }catch(parseErr){
+        throw new Error('PARSE_ERROR: response wasn\'t valid JSON — starts with: ' + clean.slice(0,150));
+      }
+    }
+
+    // Try the current default free-tier model, then fall back to an older
+    // stable one if the first name isn't available on this account.
+    // Google renames/retires free Flash model IDs fairly often. Start with the
+    // current known-good name, but if a call 404s, read the model name Google
+    // itself suggests in the error text and retry with that automatically —
+    // so this keeps working even after the next rename.
+    const modelsToTry = ['gemini-3.6-flash', 'gemini-2.5-flash'];
+    const tried = new Set();
+    let lastErr = null;
+    let parsed = null;
+    let i = 0;
+    while(i < modelsToTry.length){
+      const model = modelsToTry[i];
+      if(tried.has(model)){ i++; continue; }
+      tried.add(model);
+      try{
+        parsed = await callModel(model);
+        lastErr = null;
+        break;
+      }catch(err){
+        lastErr = err;
+        if(String(err.message).includes('MODEL_NOT_FOUND')){
+          const suggestion = err.message.match(/use models\/([a-zA-Z0-9\-.]+)/);
+          if(suggestion && suggestion[1] && !tried.has(suggestion[1]) && modelsToTry.indexOf(suggestion[1]) === -1){
+            modelsToTry.push(suggestion[1]);
+          }
+          i++;
+          continue;
+        }
+        break; // any non-"model missing" error: stop, don't keep guessing model names
+      }
+    }
+
+    if(parsed){
+      state.lastParsed = parsed;
+      stopLoading();
+      renderResult(parsed);
+      return;
+    }
+
+    console.error(lastErr);
+    stopLoading();
+    loadingState.hidden = true;
+    emptyState.hidden = false;
+    fitBtn.disabled = false;
+    const raw = (lastErr && lastErr.message) ? lastErr.message : String(lastErr);
+    const low = raw.toLowerCase();
+    if(low.includes('quota')){
+      showError("Hit today's free quota on this key. Wait a bit and try again, or use a different free key. (" + raw + ")");
+    }else if(low.startsWith('key:')){
+      showError("That API key wasn't accepted. Double-check it was copied in full from Google AI Studio. (" + raw + ")");
+    }else if(low.includes('failed to fetch') || low.includes('networkerror') || low.includes('load failed') || low.includes('network request failed')){
+      showError("Couldn't reach Gemini from this page — likely a cross-site request block. Screenshot this exact box and send it back: " + raw);
+    }else{
+      showError("Couldn't fit this one. Please screenshot this exact box and send it back so it can be diagnosed: " + raw);
+    }
+  }
+
+  // ---------- Render ----------
+  function renderResult(parsed){
+    loadingState.hidden = true;
+    resultState.hidden = false;
+    fitBtn.disabled = false;
+
+    // tape gauge — before (original) and after (tailored) scores on one ruler
+    const gauge = document.getElementById('tapeGauge');
+    const before = Math.max(0, Math.min(100, Math.round(parsed.match_score || 0)));
+    const hasAfter = typeof parsed.tailored_score === 'number';
+    const after = hasAfter ? Math.max(0, Math.min(100, Math.round(parsed.tailored_score))) : null;
+    let html = '<div class="ruler"></div>';
+    for(let v=0; v<=100; v+=10){
+      html += '<div class="tick" style="left:' + v + '%"></div>';
+      html += '<div class="tick-label" style="left:' + v + '%">' + v + '</div>';
+    }
+    html += '<div class="pin before" style="left:' + before + '%"><span class="num">' + before + '</span><span class="dot"></span></div>';
+    if(hasAfter){
+      html += '<div class="pin after" style="left:' + after + '%"><span class="num">' + after + '</span><span class="dot"></span></div>';
+    }
+    gauge.innerHTML = html;
+    const scoreLabel = document.querySelector('.score-label');
+    if(hasAfter){
+      const delta = after - before;
+      scoreLabel.innerHTML = 'Grey = your original resume · Brass = the fitted version below' +
+        (delta > 0 ? ' <span class="delta">+' + delta + '</span>' : '');
+    }else{
+      scoreLabel.textContent = 'Match to this job, before tailoring';
+    }
+
+    // keyword chips
+    const matchedChips = document.getElementById('matchedChips');
+    const missingChips = document.getElementById('missingChips');
+    matchedChips.innerHTML = (parsed.matched_keywords||[]).map(k => '<span class="chip">' + escapeHtml(k) + '</span>').join('') || '<span class="chip">—</span>';
+    missingChips.innerHTML = (parsed.missing_keywords||[]).map(k => '<span class="chip">' + escapeHtml(k) + '</span>').join('') || '<span class="chip">—</span>';
+
+    // resume sheet — built from the original resume's own section structure
+    const r = parsed.tailored_resume || {};
+    let sheet = '<h2>' + escapeHtml(r.headline || 'Tailored Resume') + '</h2>';
+    (r.sections || []).forEach(sec => {
+      sheet += '<h4>' + escapeHtml(sec.title || '') + '</h4>';
+      const content = sec.content || [];
+      if(sec.style === 'tags'){
+        sheet += '<div class="rs-skills">' + content.map(s => '<span>' + escapeHtml(s) + '</span>').join('') + '</div>';
+      }else if(sec.style === 'bullets'){
+        sheet += '<ul>' + content.map(b => '<li>' + escapeHtml(b) + '</li>').join('') + '</ul>';
+      }else{
+        sheet += content.map(p => '<p class="rs-summary">' + escapeHtml(p) + '</p>').join('');
+      }
+    });
+    document.getElementById('resumeSheet').innerHTML = sheet;
+  }
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  // ---------- Actions ----------
+  document.getElementById('downloadBtn').addEventListener('click', () => window.print());
+
+  document.getElementById('copyBtn').addEventListener('click', () => {
+    const p = state.lastParsed;
+    if(!p) return;
+    const r = p.tailored_resume || {};
+    let text = (r.headline || '') + '\n\n';
+    (r.sections || []).forEach(sec => {
+      text += (sec.title || '').toUpperCase() + '\n';
+      const content = sec.content || [];
+      if(sec.style === 'tags'){
+        text += content.join(', ') + '\n\n';
+      }else if(sec.style === 'bullets'){
+        content.forEach(b => text += '  • ' + b + '\n');
+        text += '\n';
+      }else{
+        text += content.join('\n') + '\n\n';
+      }
+    });
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copyBtn');
+      const old = btn.textContent;
+      btn.textContent = 'Copied';
+      setTimeout(() => btn.textContent = old, 1500);
+    });
+  });
+
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    resultState.hidden = true;
+    emptyState.hidden = false;
+  });
+
+})();
+</script>
+</body>
+</html>
