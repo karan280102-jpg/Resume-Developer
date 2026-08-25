@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rizzume — resume tailoring, cut to the job</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0B0D;
+    --bg-2:#141416;
+    --bg-3:#1D1D20;
+    --ink:#F5F4F2;
+    --ink-soft:#ADAAA4;
+    --coral:#FF6B4A;
+    --amber:#FFB648;
+    --coral-rgb:255,107,74;
+    --amber-rgb:255,182,72;
+    --danger-rgb:255,90,74;
+    --danger-text:#FFD7CF;
+    --line:#2A2A2E;
+    --muted-accent:#6E7684;
+    --success:#35C878;
+    --success-soft:#7FE0A8;
+    --white:#FBFAF6;
+    --doc-ink:#20262E;
+    --doc-line:#DAD6C9;
+    --texture-dot:rgba(245,244,242,0.035);
+    --radius:2px;
+  }
+  :root[data-theme="light"]{
+    --bg:#F6F4EF;
+    --bg-2:#FFFFFF;
+    --bg-3:#EDE9E0;
+    --ink:#18181B;
+    --ink-soft:#615E58;
+    --coral:#B8860B;
+    --amber:#9C7A1E;
+    --coral-rgb:184,134,11;
+    --amber-rgb:156,122,30;
+    --danger-rgb:196,58,43;
+    --danger-text:#8A2318;
+    --line:#E2DDD1;
+    --muted-accent:#5A6472;
+    --success:#1E9C6B;
+    --success-soft:#1E9C6B;
+    --texture-dot:rgba(24,24,27,0.045);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background-color:var(--bg);
+    background-image:
+      radial-gradient(circle at 1px 1px, var(--texture-dot) 1px, transparent 0);
+    background-size:22px 22px;
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+    transition:background-color .25s ease, color .25s ease;
+  }
+  .app{max-width:1120px;margin:0 auto;padding:0 24px 64px;}
+
+  button:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline:2px solid var(--amber);
+    outline-offset:2px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+
+  @keyframes fadeUp{
+    from{ opacity:0; transform:translateY(14px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  @keyframes popIn{
+    from{ opacity:0; transform:scale(.92); }
+    to{ opacity:1; transform:scale(1); }
+  }
+  @keyframes shimmer{
+    0%{ background-position:-200% 0; }
+    100%{ background-position:200% 0; }
+  }
+  @keyframes softPulse{
+    0%,100%{ box-shadow:0 0 0 0 rgba(var(--coral-rgb),0.32); }
+    50%{ box-shadow:0 0 0 6px rgba(var(--coral-rgb),0); }
+  }
+  .reveal{ animation:fadeUp .55s cubic-bezier(.16,.8,.3,1) both; }
+  .reveal-pop{ animation:popIn .4s cubic-bezier(.34,1.4,.64,1) both; }
+
+  ::view-transition-old(root), ::view-transition-new(root){
+    animation:none; mix-blend-mode:normal;
+  }
+  ::view-transition-new(root){ z-index:1; }
+  ::view-transition-old(root){ z-index:0; }
+
+  /* ---------- Masthead ---------- */
+  .masthead{
+    padding:64px 0 40px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:44px;
+  }
+  .mark-row{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:18px; gap:16px; flex-wrap:wrap;
+  }
+  .mark{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--amber);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .theme-toggle{
+    display:flex; align-items:center; gap:7px;
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.06em;
+    background:var(--bg-2); border:1px solid var(--line); color:var(--ink-soft);
+    padding:7px 13px; border-radius:20px; cursor:pointer;
+    transition:border-color .18s ease, color .18s ease, background .18s ease;
+  }
+  .theme-toggle:hover{ border-color:var(--amber); color:var(--ink); }
+  .theme-toggle svg{ width:14px; height:14px; }
+  .mark::before{
+    content:"";
+    width:22px;height:2px; border-radius:2px;
+    background:linear-gradient(90deg, var(--coral), var(--amber));
+    display:inline-block;
+  }
+  h1{
+    font-family:'Syne',sans-serif;
+    font-weight:800;
+    font-size:clamp(32px,4.5vw,52px);
+    line-height:1.08;
+    letter-spacing:-0.01em;
+    margin:0 0 14px;
+    max-width:780px;
+  }
+  h1 em{
+    font-style:normal;
+    background:linear-gradient(100deg, var(--coral), var(--amber));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .tag{
+    font-size:16px;
+    color:var(--ink-soft);
+    max-width:480px;
+    margin:0;
+  }
+
+  /* ---------- Workbench layout ---------- */
+  .workbench{
+    display:grid;
+    grid-template-columns:1fr 34px 1fr;
+    align-items:start;
+  }
+  @media (max-width:860px){
+    .workbench{ display:block; }
+    .motivation-panel, .workbench > .stitch-divider.vertical{ display:none; }
+  }
+
+  /* ---------- Output overlay — the result opens as its own full-screen view ---------- */
+  .output-overlay{
+    position:fixed; inset:0; z-index:80;
+    background:var(--bg);
+    background-image: radial-gradient(circle at 1px 1px, var(--texture-dot) 1px, transparent 0);
+    background-size:22px 22px;
+    transform:translateX(100%);
+    visibility:hidden;
+    transition:transform .45s cubic-bezier(.16,.8,.3,1), visibility 0s linear .45s;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .output-overlay.open{
+    transform:translateX(0);
+    visibility:visible;
+    transition:transform .45s cubic-bezier(.16,.8,.3,1);
+  }
+  @media (prefers-reduced-motion: reduce){
+    .output-overlay{ transition:opacity .2s ease, visibility 0s linear .2s; transform:none; opacity:0; }
+    .output-overlay.open{ transition:opacity .2s ease; opacity:1; }
+  }
+  .overlay-inner{
+    max-width:720px; margin:0 auto; padding:28px 24px 64px;
+  }
+  .overlay-back{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.04em;
+    background:var(--bg-2); border:1px solid var(--line); color:var(--ink-soft);
+    padding:9px 16px; border-radius:20px; cursor:pointer; margin-bottom:28px;
+    transition:border-color .18s ease, color .18s ease;
+  }
+  .overlay-back:hover{ border-color:var(--amber); color:var(--ink); }
+
+  .stage-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:18px;
+  }
+
+  /* ---------- Progress tracker ---------- */
+  .tracker{
+    display:flex; align-items:center; gap:0;
+    margin-bottom:34px; user-select:none;
+  }
+  .tracker .t-step{
+    display:flex; align-items:center; gap:8px;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px;
+    letter-spacing:.06em; text-transform:uppercase;
+    color:#6B6864; transition:color .3s ease;
+  }
+  .tracker .t-dot{
+    width:9px; height:9px; border-radius:50%;
+    background:#38363A; border:2px solid transparent;
+    transition:background .3s ease, border-color .3s ease, transform .3s ease;
+  }
+  .tracker .t-step.active{ color:var(--amber); }
+  .tracker .t-step.active .t-dot{
+    background:var(--coral); transform:scale(1.25);
+    animation:softPulse 1.8s ease-in-out infinite;
+  }
+  .tracker .t-step.done{ color:var(--muted-accent); }
+  .tracker .t-step.done .t-dot{ background:var(--muted-accent); }
+  .tracker .t-line{
+    flex:1; height:1px; margin:0 10px; min-width:16px;
+    background-image:repeating-linear-gradient(to right, var(--line) 0 5px, transparent 5px 10px);
+  }
+
+  /* ---------- Stitch dividers ---------- */
+  .stitch-divider{
+    height:1px;
+    margin:22px 0;
+    background-image:repeating-linear-gradient(to right, var(--line) 0 6px, transparent 6px 12px);
+  }
+  .stitch-divider.vertical{
+    width:1px; height:100%; margin:0; align-self:stretch;
+    background-image:repeating-linear-gradient(to bottom, var(--line) 0 6px, transparent 6px 12px);
+  }
+
+  /* ---------- Motivation panel — fills the empty column beside the wizard ---------- */
+  .motivation-panel{
+    position:sticky; top:32px; align-self:stretch;
+    min-height:520px; padding:20px;
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+  }
+  .motivation-ghost-mark{
+    position:absolute; top:-30px; left:50%; transform:translateX(-50%);
+    font-family:'Syne',sans-serif; font-weight:800; font-size:260px; line-height:1;
+    color:var(--bg-3); z-index:0; pointer-events:none; user-select:none;
+  }
+  .motivation-inner{ text-align:center; max-width:480px; position:relative; z-index:1; }
+  .motivation-quote{
+    font-family:'Syne',sans-serif; font-weight:700;
+    font-size:clamp(28px,3.3vw,40px); line-height:1.42;
+    color:var(--ink);
+    transition:opacity .4s ease, transform .4s cubic-bezier(.16,.8,.3,1), filter .4s ease;
+  }
+  .motivation-quote.swap-out{
+    opacity:0; transform:translateY(-16px) scale(.96); filter:blur(2px);
+  }
+  .motivation-quote::before{ content:"\201C"; color:var(--amber); }
+  .motivation-quote::after{ content:"\201D"; color:var(--amber); }
+  .motivation-progress{
+    margin:32px auto 0; width:130px; height:2px;
+    background:var(--line); border-radius:2px; overflow:hidden;
+  }
+  .motivation-progress-fill{
+    height:100%; width:0%;
+    background:linear-gradient(90deg,var(--coral),var(--amber));
+  }
+  /* ---------- Intake ---------- */
+  .intake{padding-top:2px;}
+  .dropzone{
+    background:var(--bg-2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:22px;
+    position:relative;
+    box-shadow:0 1px 2px rgba(0,0,0,0.3);
+    transition:border-color .2s ease, background .2s ease, box-shadow .25s ease, transform .2s ease;
+  }
+  .dropzone.drag{border-color:var(--coral); background:var(--bg-3); transform:translateY(-2px); box-shadow:0 12px 28px rgba(var(--coral-rgb),0.22);}
+  .dropzone.filled{border-color:var(--amber); box-shadow:0 4px 16px rgba(var(--amber-rgb),0.14);}
+  .dz-content{text-align:center;padding:14px 0;}
+  .dz-icon{display:flex; align-items:center; justify-content:center; margin-bottom:10px; color:var(--coral); opacity:.95;}
+  .dz-icon svg{width:26px;height:26px;}
+  .dz-content p{margin:0 0 12px; font-size:14px; color:var(--ink-soft);}
+  .dz-btn{
+    font-family:'Inter',sans-serif;
+    font-size:13px; font-weight:600;
+    background:var(--bg-3);
+    color:var(--ink);
+    border:1px solid var(--line);
+    padding:9px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:background .18s ease, transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .dz-btn:hover{background:#232326; border-color:var(--amber); transform:translateY(-1px); box-shadow:0 6px 14px rgba(0,0,0,0.35);}
+  .dz-btn:active{transform:translateY(0);}
+  .dz-alt{margin-top:12px !important; font-size:13px;}
+  .link-btn{
+    background:none;border:none;padding:0;
+    color:var(--amber); text-decoration:underline;
+    font-size:13px; cursor:pointer; font-family:inherit;
+  }
+  .paste-area{
+    width:100%; min-height:140px; margin-top:6px;
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    border:1px solid var(--line); border-radius:8px;
+    padding:12px; resize:vertical; background:var(--bg);
+    color:var(--ink);
+  }
+  .dz-filename{
+    margin-top:10px; font-family:'IBM Plex Mono',monospace;
+    font-size:12px; color:var(--amber); text-align:center; word-break:break-all;
+  }
+  .jd-preview{
+    max-width:100%; max-height:180px; display:block;
+    margin:8px auto 0; border-radius:8px; border:1px solid var(--line);
+    box-shadow:0 4px 14px rgba(0,0,0,0.35);
+  }
+
+  .fit-btn{
+    width:100%; margin-top:24px;
+    font-family:'Syne',sans-serif;
+    font-weight:700; font-size:16px;
+    background:linear-gradient(100deg, var(--coral), var(--amber));
+    color:#1A1109;
+    border:none; padding:16px; border-radius:10px;
+    cursor:pointer; letter-spacing:.01em;
+    box-shadow:0 8px 24px rgba(var(--coral-rgb),0.3);
+    transition:transform .18s ease, box-shadow .18s ease, opacity .18s ease, background .18s ease;
+  }
+  .fit-btn:hover:not(:disabled){transform:translateY(-2px); box-shadow:0 14px 32px rgba(var(--coral-rgb),0.4);}
+  .fit-btn:active:not(:disabled){transform:translateY(0);}
+  .fit-btn:disabled{background:var(--bg-3); color:var(--ink-soft); opacity:.6; cursor:not-allowed; box-shadow:none;}
+
+  .error-msg{
+    margin-top:14px; font-size:13.5px; color:var(--danger-text);
+    background:rgba(var(--danger-rgb),0.1); border:1px solid rgba(var(--danger-rgb),0.35); border-radius:8px;
+    padding:10px 12px;
+  }
+
+  /* ---------- Intake wizard ---------- */
+  .wiz-steps{ display:flex; align-items:center; margin-bottom:26px; user-select:none; }
+  .wiz-dot{
+    width:26px; height:26px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600;
+    background:var(--bg-3); color:#6B6864; border:1px solid var(--line);
+    transition:background .25s ease, color .25s ease, border-color .25s ease;
+  }
+  .wiz-dot.active{ background:linear-gradient(100deg,var(--coral),var(--amber)); color:#1A1109; border-color:transparent; }
+  .wiz-dot.done{ background:var(--bg-3); color:var(--amber); border-color:var(--amber); }
+  .wiz-track{ flex:1; height:1px; background:var(--line); margin:0 6px; }
+  .wiz-title{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-soft); margin:0 0 16px;
+  }
+  .wiz-summary{
+    background:var(--bg-2); border:1px solid var(--line); border-radius:10px;
+    padding:16px; font-size:13.5px; color:var(--ink-soft); line-height:1.7;
+  }
+  .wiz-summary b{ color:var(--ink); font-weight:600; }
+  .wiz-nav{ display:flex; gap:10px; margin-top:24px; }
+  .wiz-nav .fit-btn{ flex:1; }
+  .wiz-nav .action-btn{ flex:0 0 auto; }
+
+  .photo-row{
+    display:flex; gap:16px; align-items:center;
+    margin-top:16px; padding-top:16px; border-top:1px dashed var(--line);
+  }
+  .photo-circle{
+    width:64px; height:64px; border-radius:50%; flex-shrink:0;
+    background:var(--bg-3); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    color:#5C5A56; overflow:hidden;
+  }
+  .photo-circle svg{ width:28px; height:28px; }
+  .photo-circle img{ width:100%; height:100%; object-fit:cover; object-position:50% 22%; }
+  .photo-info{ flex:1; min-width:0; }
+  .photo-label{ font-size:13.5px; font-weight:600; color:var(--ink); margin:0 0 4px; }
+  .photo-help{ font-size:12px; color:var(--ink-soft); margin:0 0 10px; line-height:1.5; }
+
+  /* ---------- Template gallery ---------- */
+  .tpl-gallery{ margin-bottom:20px; }
+  .tpl-gallery-title{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink-soft); margin:0 0 10px;
+  }
+  .tpl-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .tpl-chip{
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600;
+    padding:8px 14px; border-radius:20px; cursor:pointer;
+    background:var(--bg-2); border:1px solid var(--line); color:var(--ink-soft);
+    transition:all .18s ease;
+  }
+  .tpl-chip:hover{ border-color:var(--amber); color:var(--ink); }
+  .tpl-chip.active{
+    background:linear-gradient(100deg,var(--coral),var(--amber));
+    color:#1A1109; border-color:transparent;
+  }
+  .tpl-note{
+    font-size:12.5px; color:var(--ink-soft); margin:-10px 0 22px; font-style:italic;
+  }
+
+  /* ---------- Output ---------- */
+  .loading-state{padding:52px 24px; text-align:center;}
+  .quote-wrap{
+    min-height:70px; display:flex; align-items:center; justify-content:center;
+    margin-bottom:22px; padding:0 12px;
+  }
+  .quote-line{
+    font-family:'Syne',sans-serif; font-weight:600; font-style:normal;
+    font-size:clamp(17px,2.4vw,21px); line-height:1.4; color:var(--ink);
+    max-width:440px;
+  }
+  .quote-line::before{ content:"“"; color:var(--amber); }
+  .quote-line::after{ content:"”"; color:var(--amber); }
+  .tape{
+    width:100%; max-width:320px; height:6px; margin:0 auto 18px;
+    background:var(--bg-3); border-radius:3px; overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .tape-fill{
+    height:100%; width:0%;
+    background:linear-gradient(90deg, var(--coral), var(--amber), var(--coral));
+    background-size:200% 100%;
+    animation:shimmer 1.6s linear infinite;
+    transition:width .4s ease;
+  }
+  #loadingText{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--ink-soft); letter-spacing:.02em;}
+
+  .result{}
+
+  /* score gauge */
+  .score-block{
+    background:var(--bg-2); border:1px solid var(--line); border-radius:12px;
+    padding:24px 24px 20px; margin-bottom:22px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.3);
+  }
+  .tape-gauge{position:relative; height:46px; margin-top:10px;}
+  .tape-gauge .ruler{
+    position:absolute; left:0; right:0; top:24px; height:2px; background:#2E2E32;
+  }
+  .tape-gauge .tick{
+    position:absolute; top:18px; width:1px; height:8px; background:#3A3A3E;
+  }
+  .tape-gauge .tick-label{
+    position:absolute; top:28px; transform:translateX(-50%);
+    font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ink-soft);
+  }
+  .tape-gauge .pin{
+    position:absolute; top:0; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center;
+    transition:left .8s cubic-bezier(.16,.8,.3,1);
+  }
+  .tape-gauge .pin .num{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:15px;
+    color:var(--amber); margin-bottom:2px;
+  }
+  .tape-gauge .pin .dot{
+    width:10px; height:10px; border-radius:50%; background:var(--coral);
+    border:2px solid var(--bg-2); box-shadow:0 0 0 1px var(--coral), 0 3px 10px rgba(var(--coral-rgb),0.45);
+  }
+  .tape-gauge .pin.before .num{ color:var(--muted-accent); font-weight:500; }
+  .tape-gauge .pin.before .dot{
+    background:var(--muted-accent); box-shadow:0 0 0 1px var(--muted-accent), 0 3px 8px rgba(110,118,132,0.3);
+  }
+  .score-label .delta{
+    display:inline-block; color:var(--success-soft); font-family:'IBM Plex Mono',monospace; font-weight:600;
+    margin-left:6px; background:rgba(53,200,120,0.14); padding:2px 8px; border-radius:20px;
+    animation:popIn .4s cubic-bezier(.34,1.4,.64,1) both; animation-delay:.5s;
+  }
+  .score-label{
+    margin-top:16px; font-size:12.5px; color:var(--ink-soft);
+    font-family:'IBM Plex Mono',monospace; letter-spacing:.04em; text-transform:uppercase;
+  }
+
+  .keywords{
+    display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;
+  }
+  @media (max-width:520px){.keywords{grid-template-columns:1fr;}}
+  .kw-group{
+    background:var(--bg-2); border:1px solid var(--line); border-radius:12px; padding:16px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.3);
+  }
+  .kw-group h3{
+    margin:0 0 10px; font-family:'IBM Plex Mono',monospace; font-size:11px;
+    text-transform:uppercase; letter-spacing:.1em; color:var(--ink-soft); font-weight:600;
+  }
+  .chips{display:flex; flex-wrap:wrap; gap:6px;}
+  .chip{
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px;
+    padding:4px 9px; border-radius:20px; white-space:nowrap;
+    opacity:0; animation:popIn .4s cubic-bezier(.34,1.4,.64,1) both;
+    transition:transform .15s ease;
+  }
+  .chip:hover{ transform:translateY(-1px); }
+  .matched .chip{background:rgba(53,200,120,0.12); color:var(--success-soft); border:1px solid rgba(53,200,120,0.3);}
+  .missing .chip{background:rgba(var(--danger-rgb),0.12); color:var(--danger-text); border:1px solid rgba(var(--danger-rgb),0.32);}
+
+  .resume-sheet{
+    background:var(--white); border:1px solid var(--doc-line); border-radius:12px;
+    padding:38px 42px; margin-bottom:22px; position:relative; overflow:hidden;
+    box-shadow:0 24px 50px rgba(0,0,0,0.45), 0 4px 14px rgba(0,0,0,0.3);
+  }
+  .resume-sheet::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:4px;
+    background:var(--doc-ink);
+  }
+  .resume-sheet h2{
+    font-family:'Inter',sans-serif; font-weight:700; font-size:22px; margin:6px 0 4px;
+    letter-spacing:-.01em; color:var(--doc-ink);
+  }
+  .resume-sheet .rs-summary{color:#5B5F63; font-size:14.5px; margin:0 0 20px; max-width:640px;}
+  .resume-sheet h4{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase;
+    letter-spacing:.1em; color:#5C5A56; margin:24px 0 10px;
+    border-bottom:1px solid var(--doc-line); padding-bottom:6px;
+  }
+  .rs-skills{display:flex; flex-wrap:wrap; gap:6px 10px; font-size:13.5px; color:var(--doc-ink);}
+  .rs-skills span::after{content:"·"; margin-left:10px; color:var(--doc-line);}
+  .rs-skills span:last-child::after{content:"";}
+  .resume-sheet ul{margin:8px 0 0; padding-left:18px; font-size:13.5px; color:var(--doc-ink);}
+  .resume-sheet li{margin-bottom:6px; color:var(--doc-ink);}
+  .rs-edu{font-size:13.5px; color:var(--doc-ink);}
+  .rs-edu div{margin-bottom:4px;}
+
+  /* ---------- 10 resume templates ---------- */
+
+  /* Shared: optional photo + decorative skill bars, used by several templates */
+  .rs-photo{ flex-shrink:0; object-fit:cover; object-position:50% 22%; border:2px solid var(--doc-line); }
+  .rs-photo-circle{ width:76px; height:76px; border-radius:50%; }
+  .rs-photo-square{ width:72px; height:72px; border-radius:10px; }
+  .rs-bars{ display:flex; flex-direction:column; gap:10px; }
+  .rs-bar-item span{ font-size:12.5px; display:block; margin-bottom:4px; }
+  .rs-bar-track{ height:5px; border-radius:3px; background:rgba(255,255,255,0.18); overflow:hidden; }
+  .rs-bar-fill{ height:100%; width:78%; border-radius:3px; background:#8A8783; }
+
+  /* 1. Classic Centered — bold caps, centered name, full-width rules (ref: Logan Mitchell) */
+  /* Deliberately monochrome — no accent color at all, the traditional resume convention */
+  .tpl-classic::before{ display:none; }
+  .tpl-classic h2{ font-family:Georgia,'Times New Roman',serif; text-align:center; font-size:22px; }
+  .tpl-classic h4{ text-align:left; letter-spacing:.14em; color:var(--doc-ink); }
+
+  /* 2. Elegant Banner — grey banner headers + diamond bullets (ref: Tiffany Giroux) */
+  .tpl-banner::before{ display:none; }
+  .tpl-banner h2{ text-align:center; font-family:Georgia,serif; }
+  .tpl-banner h4{
+    background:#EFEDE7; border:none; border-radius:3px; padding:6px 12px;
+    text-align:center; letter-spacing:.16em; color:#6B6864;
+  }
+  .tpl-banner ul{ list-style:none; padding-left:4px; }
+  .tpl-banner li::before{ content:"❖  "; color:#7A3B44; }
+
+  /* 3. Minimal Legal — plain, left-aligned, airy (ref: Adam Jones) */
+  .tpl-legal::before{ display:none; }
+  .tpl-legal{ padding:40px 44px; }
+  .tpl-legal h2{ font-size:20px; }
+  .tpl-legal h4{ border-bottom-width:2px; color:var(--doc-ink); letter-spacing:.06em; }
+  .tpl-legal .rs-skills span{ font-size:12.5px; }
+
+  /* 4. Warm Serif — coral serif name + underline-divided skills (ref: Ada Smith) */
+  .tpl-serif::before{ background:linear-gradient(90deg,#C2542E,#8A6431); }
+  .tpl-serif h2{ font-family:Georgia,serif; color:#C2542E; font-size:24px; }
+  .tpl-serif h4{ font-family:Georgia,serif; text-transform:none; letter-spacing:0; font-size:15px; color:#C2542E; border-bottom-color:var(--doc-line); }
+  .tpl-serif .rs-skills{ flex-direction:column; gap:0; }
+  .tpl-serif .rs-skills span{ padding:7px 0; border-bottom:1px solid var(--doc-line); }
+  .tpl-serif .rs-skills span::after{ content:""; }
+
+  /* 5. Header Band — teal band across the top, its own identity (ref: Kane Jones) */
+  .tpl-band{ padding-top:0; overflow:hidden; }
+  .tpl-band::before{ display:none; }
+  .tpl-band > h2{
+    position:relative; z-index:1; font-family:'Inter',sans-serif;
+    background:linear-gradient(100deg,#0F6E5C,#1E9C82); color:#fff;
+    margin:0 -42px 20px; padding:26px 42px 20px;
+  }
+  .tpl-band h4{ color:#0F6E5C; }
+
+  /* 6 & 7: Photo Sidebar / Sidebar Bars — header band + two-column body (ref: Vince Murray, Arthur Sherman) */
+  .tpl-photo-sidebar, .tpl-bars{
+    display:grid; grid-template-columns:1fr 2fr; grid-template-rows:auto 1fr;
+    padding:0; overflow:hidden;
+  }
+  .tpl-photo-sidebar::before, .tpl-bars::before{ display:none; }
+  .tpl-photo-sidebar > .rs-head-strip, .tpl-bars > .rs-head-strip{
+    grid-column:1 / -1; grid-row:1;
+    display:flex; align-items:center; gap:16px; margin:0; padding:28px 32px;
+    background:linear-gradient(100deg,#7A2E3A,#A8455A);
+  }
+  .tpl-bars > .rs-head-strip{ background:var(--doc-ink); }
+  .tpl-photo-sidebar > .rs-head-strip h2{ color:#fff; font-family:'Inter',sans-serif; font-size:20px; }
+  .tpl-bars > .rs-head-strip h2{ color:#fff; font-family:'Inter',sans-serif; font-weight:800; text-transform:uppercase; letter-spacing:.01em; font-size:22px; }
+  .tpl-photo-sidebar > .rs-head-strip .rs-photo, .tpl-bars > .rs-head-strip .rs-photo{ border-color:rgba(255,255,255,.7); }
+  .tpl-photo-sidebar > .tpl-side, .tpl-bars > .tpl-side{
+    grid-column:1; grid-row:2; background:var(--doc-ink); color:#EDEBE6; padding:28px 24px;
+  }
+  .tpl-photo-sidebar > .tpl-side h4{ color:#D4A857; border-bottom-color:#3A3F45; font-size:10px; }
+  .tpl-bars > .tpl-side h4{ color:#B7B4AF; border-bottom-color:#3A3F45; font-size:10px; }
+  .tpl-photo-sidebar > .tpl-main, .tpl-bars > .tpl-main{ grid-column:2; grid-row:2; padding:28px 30px; }
+  .tpl-photo-sidebar .rs-bar-fill{ background:linear-gradient(90deg,#7A2E3A,#A8455A); }
+  @media (max-width:600px){
+    .tpl-photo-sidebar, .tpl-bars{ grid-template-columns:1fr; }
+    .tpl-photo-sidebar > .tpl-side, .tpl-bars > .tpl-side{ grid-column:1; }
+    .tpl-photo-sidebar > .tpl-main, .tpl-bars > .tpl-main{ grid-column:1; }
+  }
+  @media print{
+    .tpl-photo-sidebar > .tpl-side, .tpl-bars > .tpl-side{ background:#f2f2f2 !important; color:#20262E !important; }
+    .tpl-photo-sidebar > .tpl-side h4, .tpl-bars > .tpl-side h4{ color:#20262E !important; }
+    .rs-bar-fill{ background:#8A8783 !important; }
+  }
+
+  /* 8. Photo Corner — photo top-right of header, blue accents (ref: Herman Walton) */
+  .tpl-photo-corner::before{ display:none; }
+  .tpl-photo-corner .tpl-corner-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+  .tpl-photo-corner h2{ color:#2E5FA8; font-family:'Inter',sans-serif; font-weight:800; font-size:21px; }
+  .tpl-photo-corner h4{ color:#2E5FA8; }
+  .tpl-photo-corner .rs-photo{ border-radius:8px; }
+
+  /* 9. Compact ATS-safe — pure black/white, dense, no color at all (existing) */
+  .tpl-ats{ padding:28px 32px; }
+  .tpl-ats h2{ font-family:'Inter',sans-serif; font-size:19px; }
+  .tpl-ats h4{ color:#333; font-family:'Inter',sans-serif; text-transform:uppercase; font-size:10.5px; margin:16px 0 6px; }
+  .tpl-ats .rs-summary, .tpl-ats ul, .tpl-ats .rs-skills, .tpl-ats .rs-edu{ font-size:12.5px; line-height:1.5; }
+  .tpl-ats::before{ display:none; }
+
+  /* 10. Dark Executive — the one exception to the light-paper rule (existing) */
+  .tpl-dark{ background:#161616; border-color:#2A2A2A; }
+  .tpl-dark::before{ background:#D4A857; }
+  .tpl-dark h2{ color:#F5F4F2; font-family:Georgia,'Times New Roman',serif; font-weight:700; }
+  .tpl-dark .rs-summary{ color:#B7B4AF; }
+  .tpl-dark h4{ color:#D4A857; border-bottom-color:#333; }
+  .tpl-dark .rs-skills, .tpl-dark ul, .tpl-dark li, .tpl-dark .rs-edu{ color:#E3E1DC; }
+  @media print{ .tpl-dark{ background:#fff !important; border-color:var(--doc-line) !important; }
+    .tpl-dark h2, .tpl-dark .rs-skills, .tpl-dark ul, .tpl-dark li, .tpl-dark .rs-edu{ color:var(--doc-ink) !important; }
+    .tpl-dark .rs-summary{ color:#5B5F63 !important; } }
+
+  .actions{display:flex; gap:10px; flex-wrap:wrap;}
+  .action-btn{
+    font-family:'Inter',sans-serif; font-weight:600; font-size:13.5px;
+    padding:11px 18px; border-radius:8px; cursor:pointer;
+    border:1px solid var(--line); background:var(--bg-2); color:var(--ink);
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
+  }
+  .action-btn.primary{background:linear-gradient(100deg, var(--coral), var(--amber)); color:#1A1109; border:none;}
+  .action-btn:hover{transform:translateY(-2px); box-shadow:0 10px 22px rgba(0,0,0,0.4);}
+  .action-btn:active{transform:translateY(0);}
+
+  .foot-note{
+    margin-top:54px; padding-top:20px; border-top:1px solid var(--line);
+    font-size:12.5px; color:var(--ink-soft);
+  }
+
+  /* ---------- Validation popup — shown when the AI flags a bad upload ---------- */
+  .validation-modal{
+    position:fixed; inset:0; z-index:120;
+    background:rgba(0,0,0,0.55);
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  .validation-modal[hidden]{ display:none !important; }
+  .validation-modal-card{
+    background:var(--bg-2); border:1px solid var(--line); border-radius:14px;
+    padding:32px 30px; max-width:420px; width:100%;
+    box-shadow:0 24px 60px rgba(0,0,0,0.5);
+    animation:popIn .35s cubic-bezier(.34,1.4,.64,1) both;
+  }
+  .validation-modal-title{
+    font-family:'Syne',sans-serif; font-weight:700; font-size:20px;
+    color:var(--ink); margin:0 0 12px;
+  }
+  .validation-modal-msg{
+    font-size:14.5px; color:var(--ink-soft); line-height:1.6; margin:0;
+  }
+
+  @media print{
+    @page{ size:auto; margin:0.7mm; }
+    .validation-modal{ display:none !important; }
+
+    /* visibility:hidden keeps a hidden element's full space reserved on the
+       page — that reserved space from every section above the resume
+       (masthead, wizard, score gauge, keyword panels) was the blank pages.
+       display:none actually removes it from layout. Hide everything that
+       is not an ancestor of the resume sheet, at every level, so nothing
+       upstream of it can leave blank space behind. */
+    .app > *:not(.output-overlay){ display:none !important; }
+    .output-overlay > *:not(.overlay-inner){ display:none !important; }
+    .overlay-inner > *:not(.result){ display:none !important; }
+    .result > *:not(.resume-sheet){ display:none !important; }
+
+    /* The resume sheet lives inside a position:fixed overlay — fixed/absolute
+       positioning also breaks the browser's multi-page pagination (cut text,
+       duplicated sections, clipped content). Free every ancestor back into
+       normal flow so long resumes can split across pages cleanly. */
+    .output-overlay{
+      position:static !important; inset:auto !important; transform:none !important;
+      overflow:visible !important; background:none !important;
+    }
+    .overlay-inner{ max-width:none !important; padding:0 !important; margin:0 !important; }
+    .result{ display:block !important; }
+
+    .resume-sheet, .resume-sheet *{
+      animation:none !important;
+      transition:none !important;
+      opacity:1 !important;
+      transform:none !important;
+    }
+    .resume-sheet{
+      position:static !important;
+      width:auto; max-width:none; margin:0;
+      border:none; box-shadow:none;
+      padding:9mm 8mm;
+    }
+    /* Tighter type for print — same content, less wasted whitespace, more
+       likely to land on one or two pages instead of three. */
+    .resume-sheet h2{ font-size:19px !important; margin-top:0 !important; }
+    .resume-sheet h4{ font-size:10px !important; margin:12px 0 6px !important; }
+    .resume-sheet .rs-summary{ font-size:12px !important; margin-bottom:12px !important; }
+    .resume-sheet ul{ font-size:11.5px !important; margin-top:6px !important; }
+    .resume-sheet li{ margin-bottom:3px !important; }
+    .resume-sheet .rs-skills{ font-size:12px !important; }
+    .resume-sheet h4{ break-inside:avoid; break-after:avoid; }
+    .resume-sheet li{ break-inside:avoid; }
+    .resume-sheet .tpl-side, .resume-sheet .tpl-main{ break-inside:avoid-page; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="masthead">
+    <div class="mark-row reveal">
+      <div class="mark">Rizzume</div>
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to light mode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="3.5" y1="12" x2="1" y2="12"/><line x1="23" y1="12" x2="20.5" y2="12"/><line x1="5.1" y1="5.1" x2="6.8" y2="6.8"/><line x1="17.2" y1="17.2" x2="18.9" y2="18.9"/><line x1="5.1" y1="18.9" x2="6.8" y2="17.2"/><line x1="17.2" y1="6.8" x2="18.9" y2="5.1"/></svg>
+        <span id="themeToggleLabel">Light mode</span>
+      </button>
+    </div>
+    <h1 class="reveal" style="animation-delay:.08s">Cut your CV to <em>this</em> job, not the last one.</h1>
+    <p class="tag reveal" style="animation-delay:.16s">Drop your current resume and a photo of the job posting. Get a version fitted to it — free, no account.</p>
+  </header>
+
+  <div class="tracker reveal" style="animation-delay:.22s" id="tracker">
+    <div class="t-step active" id="tStep1"><span class="t-dot"></span>Cut</div>
+    <div class="t-line"></div>
+    <div class="t-step" id="tStep2"><span class="t-dot"></span>Fit</div>
+    <div class="t-line"></div>
+    <div class="t-step" id="tStep3"><span class="t-dot"></span>Finish</div>
+  </div>
+
+  <main class="workbench">
+    <section class="intake" id="intakeSection">
+      <div class="stage-label">— Cut, bring your materials</div>
+
+      <div class="wiz-steps" id="wizSteps">
+        <span class="wiz-dot active" data-wiz="0">1</span><span class="wiz-track"></span>
+        <span class="wiz-dot" data-wiz="1">2</span><span class="wiz-track"></span>
+        <span class="wiz-dot" data-wiz="2">3</span>
+      </div>
+
+      <div class="wiz-panel" id="wizPanel0" data-wiz-panel="0">
+        <p class="wiz-title">Step 1 — Your current CV</p>
+        <div class="dropzone" id="cvDrop">
+          <input type="file" id="cvInput" accept="application/pdf" hidden />
+          <div class="dz-content" id="cvDzContent">
+            <span class="dz-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg></span>
+            <p>Drop your current CV (PDF)</p>
+            <button type="button" class="dz-btn" id="cvChooseBtn">Choose file</button>
+            <p class="dz-alt">Or <button type="button" id="pasteToggle" class="link-btn">paste resume text instead</button></p>
+          </div>
+          <textarea id="cvPasteArea" class="paste-area" hidden placeholder="Paste your resume text here..."></textarea>
+          <div class="dz-filename" id="cvFileName"></div>
+        </div>
+
+        <div class="photo-row">
+          <div class="photo-circle" id="photoPreviewWrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" id="photoPlaceholderIcon"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/></svg>
+            <img id="photoPreview" hidden alt="Your photo preview" />
+          </div>
+          <div class="photo-info">
+            <p class="photo-label">Add a photo (optional)</p>
+            <p class="photo-help">Only used if you pick one of the two photo templates later. Auto-cropped and centered toward the top of the frame, where a face usually sits.</p>
+            <input type="file" id="photoInput" accept="image/*" hidden />
+            <button type="button" class="dz-btn" id="photoChooseBtn">Choose photo</button>
+            <button type="button" class="link-btn" id="photoRemoveBtn" hidden style="margin-left:10px;">Remove</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="wiz-panel" id="wizPanel1" data-wiz-panel="1" hidden>
+        <p class="wiz-title">Step 2 — The job posting</p>
+        <div class="dropzone" id="jdDrop">
+          <input type="file" id="jdInput" accept="image/*" hidden />
+          <div class="dz-content" id="jdDzContent">
+            <span class="dz-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>
+            <p>Drop a photo of the job description</p>
+            <button type="button" class="dz-btn" id="jdChooseBtn">Choose photo</button>
+            <p class="dz-alt">Or <button type="button" id="jdPasteToggle" class="link-btn">type or paste the job description instead</button></p>
+          </div>
+          <img id="jdPreview" class="jd-preview" hidden alt="Job description preview" />
+          <textarea id="jdPasteArea" class="paste-area" hidden placeholder="Paste or type the job description here..."></textarea>
+          <div class="dz-filename" id="jdFileName"></div>
+        </div>
+      </div>
+
+      <div class="wiz-panel" id="wizPanel2" data-wiz-panel="2" hidden>
+        <p class="wiz-title">Step 3 — Ready</p>
+        <div class="wiz-summary" id="wizSummary"></div>
+      </div>
+
+      <div class="wiz-nav">
+        <button type="button" class="action-btn" id="wizBackBtn" hidden>Back</button>
+        <button type="button" class="fit-btn" id="wizNextBtn" style="margin-top:0" disabled>Next</button>
+        <button id="fitBtn" class="fit-btn" style="margin-top:0" hidden disabled>Fit my resume</button>
+      </div>
+      <p id="errorMsg" class="error-msg" hidden></p>
+    </section>
+
+    <div class="stitch-divider vertical" aria-hidden="true"></div>
+
+    <aside class="motivation-panel">
+      <div class="motivation-ghost-mark" aria-hidden="true">&#8220;</div>
+      <div class="motivation-inner">
+        <p class="stage-label" style="margin-bottom:26px;">— While you get ready</p>
+        <p class="motivation-quote" id="motivationQuote"></p>
+        <div class="motivation-progress"><div class="motivation-progress-fill" id="motivationProgressFill"></div></div>
+      </div>
+    </aside>
+
+  </main>
+
+  <div class="output-overlay" id="outputOverlay">
+    <div class="overlay-inner">
+      <button type="button" class="overlay-back" id="overlayBackBtn">← Back to editor</button>
+
+      <div class="loading-state" id="loadingState" hidden>
+        <div class="quote-wrap"><p class="quote-line" id="quoteLine"></p></div>
+        <div class="tape"><div class="tape-fill" id="tapeFill"></div></div>
+        <p id="loadingText">Reading the job posting…</p>
+      </div>
+
+      <div class="result" id="resultState" hidden>
+        <div class="stage-label">— Finish, your fitted resume</div>
+        <div class="score-block reveal">
+          <div class="tape-gauge" id="tapeGauge"></div>
+          <div class="score-label">Match to this job, before tailoring</div>
+        </div>
+
+        <div class="keywords">
+          <div class="kw-group matched reveal" style="animation-delay:.08s">
+            <h3>Already fits</h3>
+            <div class="chips" id="matchedChips"></div>
+          </div>
+          <div class="kw-group missing reveal" style="animation-delay:.14s">
+            <h3>Worth adding, if true</h3>
+            <div class="chips" id="missingChips"></div>
+          </div>
+        </div>
+
+        <div class="tpl-gallery reveal" style="animation-delay:.18s">
+          <p class="tpl-gallery-title">Choose a format — 10 to pick from, same content in each</p>
+          <div class="tpl-row" id="tplRow"></div>
+        </div>
+
+        <article class="resume-sheet reveal" id="resumeSheet" style="animation-delay:.24s"></article>
+        <p class="tpl-note" id="tplNote" hidden></p>
+
+        <div class="actions reveal" style="animation-delay:.3s">
+          <button id="downloadBtn" class="action-btn primary">Download as PDF</button>
+          <button id="copyBtn" class="action-btn">Copy resume text</button>
+          <button id="restartBtn" class="action-btn">Start a new fit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="validation-modal" id="validationModal" hidden>
+    <div class="validation-modal-card">
+      <p class="validation-modal-title">That doesn't look right</p>
+      <p class="validation-modal-msg" id="validationModalMsg"></p>
+      <button type="button" class="fit-btn" id="validationModalOkBtn" style="margin-top:22px;">Go back and check my upload</button>
+    </div>
+  </div>
+
+  <footer class="foot-note">
+    Free to use. Your CV and the job posting are sent securely to generate this result and nothing is stored or saved anywhere — you don't need an account or an API key of your own.
+  </footer>
+</div>
+
+<script>
+(function(){
+  // ---------- Theme toggle (dark default, light optional) ----------
+  const themeToggle = document.getElementById('themeToggle');
+  const themeToggleLabel = document.getElementById('themeToggleLabel');
+  function applyTheme(theme){
+    document.documentElement.setAttribute('data-theme', theme);
+    themeToggleLabel.textContent = theme === 'light' ? 'Dark mode' : 'Light mode';
+    themeToggle.setAttribute('aria-label', theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
+  }
+  applyTheme('dark');
+  themeToggle.addEventListener('click', (evt) => {
+    const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+
+    // Circular reveal expanding from the button, using the View Transitions API.
+    // Browsers without support (older Safari/Firefox) just switch instantly — no error, no missing feature.
+    if(!document.startViewTransition || window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      applyTheme(next);
+      return;
+    }
+    const rect = themeToggle.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+
+    const transition = document.startViewTransition(() => { applyTheme(next); });
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        { clipPath: ['circle(0px at ' + x + 'px ' + y + 'px)', 'circle(' + endRadius + 'px at ' + x + 'px ' + y + 'px)'] },
+        { duration: 600, easing: 'ease-in-out', pseudoElement: '::view-transition-new(root)' }
+      );
+    }).catch(() => {});
+  });
+
+  const state = { cvText:'', jdBase64:'', jdMediaType:'', jdText:'', jdUsingPaste:false, usingPaste:false, lastParsed:null, selectedTemplate:'classic', photoDataUrl:null };
+
+  const cvInput = document.getElementById('cvInput');
+  const cvChooseBtn = document.getElementById('cvChooseBtn');
+  const cvDrop = document.getElementById('cvDrop');
+  const cvFileName = document.getElementById('cvFileName');
+  const cvPasteArea = document.getElementById('cvPasteArea');
+  const pasteToggle = document.getElementById('pasteToggle');
+  const cvDzContent = document.getElementById('cvDzContent');
+
+  const jdInput = document.getElementById('jdInput');
+  const jdChooseBtn = document.getElementById('jdChooseBtn');
+  const jdDrop = document.getElementById('jdDrop');
+  const jdFileName = document.getElementById('jdFileName');
+  const jdPreview = document.getElementById('jdPreview');
+  const jdDzContent = document.getElementById('jdDzContent');
+
+  const fitBtn = document.getElementById('fitBtn');
+  const errorMsg = document.getElementById('errorMsg');
+
+  const outputOverlay = document.getElementById('outputOverlay');
+  const overlayBackBtn = document.getElementById('overlayBackBtn');
+  const loadingState = document.getElementById('loadingState');
+  const resultState = document.getElementById('resultState');
+  const tapeFill = document.getElementById('tapeFill');
+  const loadingText = document.getElementById('loadingText');
+
+  function openOverlay(){
+    outputOverlay.classList.add('open');
+    outputOverlay.scrollTop = 0;
+    document.body.style.overflow = 'hidden';
+  }
+  function closeOverlay(){
+    outputOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  overlayBackBtn.addEventListener('click', () => {
+    closeOverlay();
+    setTracker('cut');
+    showWizStep(2);
+  });
+
+  function showError(msg){
+    errorMsg.textContent = msg;
+    errorMsg.hidden = false;
+  }
+  function clearError(){ errorMsg.hidden = true; }
+
+  const validationModal = document.getElementById('validationModal');
+  const validationModalMsg = document.getElementById('validationModalMsg');
+  function showValidationModal(msg){
+    const clean = String(msg || '').trim();
+    validationModalMsg.textContent = clean.length > 0 ? clean : "Something about the resume or job posting didn't look right. Please check what you uploaded and try again.";
+    validationModal.hidden = false;
+  }
+  document.getElementById('validationModalOkBtn').addEventListener('click', () => {
+    validationModal.hidden = true;
+    showWizStep(2);
+  });
+
+  function updateFitEnabled(){
+    const jdReady = !!state.jdBase64 || state.jdText.trim().length > 20;
+    fitBtn.disabled = !(state.cvText.trim().length > 20 && jdReady);
+    updateWizNext();
+  }
+
+  // ---------- Intake wizard (3 stages) ----------
+  let wizStep = 0;
+  const wizPanels = [0,1,2].map(i => document.getElementById('wizPanel' + i));
+  const wizDots = Array.from(document.querySelectorAll('.wiz-dot'));
+  const wizBackBtn = document.getElementById('wizBackBtn');
+  const wizNextBtn = document.getElementById('wizNextBtn');
+
+  function stepValid(i){
+    if(i === 0) return state.cvText.trim().length > 20;
+    if(i === 1) return !!state.jdBase64 || state.jdText.trim().length > 20;
+    return true;
+  }
+  function updateWizNext(){
+    if(wizNextBtn) wizNextBtn.disabled = !stepValid(wizStep);
+  }
+  function renderWizSummary(){
+    const el = document.getElementById('wizSummary');
+    const cvChars = state.cvText.trim().length;
+    const jdOk = !!state.jdBase64 || state.jdText.trim().length > 20;
+    const jdSourceLabel = state.jdBase64 ? 'photo attached' : (state.jdText.trim().length > 20 ? (state.jdText.trim().length + ' characters typed') : 'not added yet');
+    el.innerHTML =
+      '<div>' + (cvChars > 20 ? '✓' : '—') + ' <b>CV</b> — ' + (cvChars > 20 ? (cvChars + ' characters ready') : 'not added yet') + '</div>' +
+      '<div>' + (state.photoDataUrl ? '✓' : '—') + ' <b>Photo</b> — ' + (state.photoDataUrl ? 'added (optional)' : 'not added (optional)') + '</div>' +
+      '<div>' + (jdOk ? '✓' : '—') + ' <b>Job posting</b> — ' + jdSourceLabel + '</div>';
+  }
+  function showWizStep(i){
+    wizStep = i;
+    wizPanels.forEach((p, idx) => { p.hidden = idx !== i; });
+    wizDots.forEach((d, idx) => {
+      d.classList.toggle('active', idx === i);
+      d.classList.toggle('done', idx < i);
+    });
+    wizBackBtn.hidden = i === 0;
+    if(i === 2){
+      wizNextBtn.hidden = true;
+      fitBtn.hidden = false;
+      renderWizSummary();
+    }else{
+      wizNextBtn.hidden = false;
+      fitBtn.hidden = true;
+    }
+    updateWizNext();
+  }
+  wizNextBtn.addEventListener('click', () => { if(!wizNextBtn.disabled && wizStep < 2) showWizStep(wizStep + 1); });
+  wizBackBtn.addEventListener('click', () => { if(wizStep > 0) showWizStep(wizStep - 1); });
+  showWizStep(0);
+
+  // ---------- PDF.js loading ----------
+  let pdfjsPromise = null;
+  function ensurePdfJs(){
+    if(pdfjsPromise) return pdfjsPromise;
+    pdfjsPromise = new Promise((resolve, reject) => {
+      if(window.pdfjsLib) return resolve();
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      script.onload = () => {
+        try{
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+          resolve();
+        }catch(e){ reject(e); }
+      };
+      script.onerror = () => reject(new Error('pdf reader failed to load'));
+      document.head.appendChild(script);
+    });
+    return pdfjsPromise;
+  }
+
+  async function extractPdfText(file){
+    await ensurePdfJs();
+    const buf = await file.arrayBuffer();
+    const pdf = await window.pdfjsLib.getDocument({ data: buf }).promise;
+    let text = '';
+    for(let i=1;i<=pdf.numPages;i++){
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      text += content.items.map(it => it.str).join(' ') + '\n';
+    }
+    return text.trim();
+  }
+
+  // ---------- CV dropzone ----------
+  cvChooseBtn.addEventListener('click', () => cvInput.click());
+  cvDrop.addEventListener('click', (e) => { if(e.target === cvDrop) cvInput.click(); });
+  ['dragover','dragenter'].forEach(evt => cvDrop.addEventListener(evt, e => { e.preventDefault(); cvDrop.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(evt => cvDrop.addEventListener(evt, e => { e.preventDefault(); cvDrop.classList.remove('drag'); }));
+  cvDrop.addEventListener('drop', e => {
+    if(e.dataTransfer.files && e.dataTransfer.files[0]) handleCvFile(e.dataTransfer.files[0]);
+  });
+  cvInput.addEventListener('change', () => { if(cvInput.files[0]) handleCvFile(cvInput.files[0]); });
+
+  async function handleCvFile(file){
+    clearError();
+    if(file.type !== 'application/pdf'){
+      showError('That file is not a PDF. Choose a PDF, or paste your resume text instead.');
+      return;
+    }
+    cvFileName.textContent = 'Reading ' + file.name + '…';
+    try{
+      const text = await extractPdfText(file);
+      if(text.length < 20){
+        showError("Couldn't find readable text in that PDF — it may be a scanned image. Try pasting your resume text instead.");
+        cvFileName.textContent = '';
+        return;
+      }
+      state.cvText = text;
+      cvFileName.textContent = 'Using ' + file.name + ' (' + text.length + ' characters read)';
+      cvDrop.classList.add('filled');
+      updateFitEnabled();
+    }catch(err){
+      console.error(err);
+      showError("Couldn't read that PDF. Try another file, or paste your resume text instead.");
+      cvFileName.textContent = '';
+    }
+  }
+
+  pasteToggle.addEventListener('click', () => {
+    state.usingPaste = !state.usingPaste;
+    cvPasteArea.hidden = !state.usingPaste;
+    cvDzContent.style.display = state.usingPaste ? 'none' : 'block';
+    pasteToggle.parentElement.style.display = state.usingPaste ? 'none' : 'block';
+    if(state.usingPaste){
+      const back = document.createElement('button');
+      back.type = 'button';
+      back.className = 'link-btn';
+      back.textContent = 'Upload a PDF instead';
+      back.style.marginTop = '8px';
+      back.addEventListener('click', () => {
+        state.usingPaste = false;
+        cvPasteArea.hidden = true;
+        cvDzContent.style.display = 'block';
+        pasteToggle.parentElement.style.display = 'block';
+        back.remove();
+        cvFileName.textContent = '';
+      }, { once:true });
+      cvPasteArea.insertAdjacentElement('afterend', back);
+      cvPasteArea.focus();
+    }
+  });
+  cvPasteArea.addEventListener('input', () => {
+    state.cvText = cvPasteArea.value;
+    cvDrop.classList.toggle('filled', state.cvText.trim().length > 20);
+    updateFitEnabled();
+  });
+
+  // ---------- Optional photo ----------
+  const photoInput = document.getElementById('photoInput');
+  const photoChooseBtn = document.getElementById('photoChooseBtn');
+  const photoRemoveBtn = document.getElementById('photoRemoveBtn');
+  const photoPreview = document.getElementById('photoPreview');
+  const photoPlaceholderIcon = document.getElementById('photoPlaceholderIcon');
+
+  photoChooseBtn.addEventListener('click', () => photoInput.click());
+  photoInput.addEventListener('change', () => {
+    const file = photoInput.files[0];
+    if(!file) return;
+    if(!file.type.startsWith('image/')){ return; }
+    const reader = new FileReader();
+    reader.onload = () => {
+      state.photoDataUrl = reader.result;
+      photoPreview.src = reader.result;
+      photoPreview.hidden = false;
+      photoPlaceholderIcon.hidden = true;
+      photoRemoveBtn.hidden = false;
+    };
+    reader.readAsDataURL(file);
+  });
+  photoRemoveBtn.addEventListener('click', () => {
+    state.photoDataUrl = null;
+    photoInput.value = '';
+    photoPreview.hidden = true;
+    photoPlaceholderIcon.hidden = false;
+    photoRemoveBtn.hidden = true;
+  });
+
+  // ---------- JD dropzone ----------
+  jdChooseBtn.addEventListener('click', () => jdInput.click());
+  jdDrop.addEventListener('click', (e) => { if(e.target === jdDrop) jdInput.click(); });
+  ['dragover','dragenter'].forEach(evt => jdDrop.addEventListener(evt, e => { e.preventDefault(); jdDrop.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(evt => jdDrop.addEventListener(evt, e => { e.preventDefault(); jdDrop.classList.remove('drag'); }));
+  jdDrop.addEventListener('drop', e => {
+    if(e.dataTransfer.files && e.dataTransfer.files[0]) handleJdFile(e.dataTransfer.files[0]);
+  });
+  jdInput.addEventListener('change', () => { if(jdInput.files[0]) handleJdFile(jdInput.files[0]); });
+
+  function handleJdFile(file){
+    clearError();
+    if(!file.type.startsWith('image/')){
+      showError('That is not an image. Choose a photo or screenshot of the job posting.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      const [meta, b64] = result.split(',');
+      state.jdBase64 = b64;
+      state.jdMediaType = file.type;
+      state.jdText = '';
+      jdPreview.src = result;
+      jdPreview.hidden = false;
+      jdFileName.textContent = 'Using ' + file.name;
+      jdDrop.classList.add('filled');
+      updateFitEnabled();
+    };
+    reader.onerror = () => showError("Couldn't read that photo. Try another file.");
+    reader.readAsDataURL(file);
+  }
+
+  // ---------- JD manual text (alternative to photo upload) ----------
+  const jdPasteToggle = document.getElementById('jdPasteToggle');
+  const jdPasteArea = document.getElementById('jdPasteArea');
+  jdPasteToggle.addEventListener('click', () => {
+    state.jdUsingPaste = true;
+    jdPasteArea.hidden = false;
+    jdDzContent.style.display = 'none';
+    const back = document.createElement('button');
+    back.type = 'button';
+    back.className = 'link-btn';
+    back.textContent = 'Upload a photo instead';
+    back.style.marginTop = '8px';
+    back.addEventListener('click', () => {
+      state.jdUsingPaste = false;
+      jdPasteArea.hidden = true;
+      jdDzContent.style.display = 'block';
+      back.remove();
+      jdFileName.textContent = '';
+      jdDrop.classList.toggle('filled', !!state.jdBase64);
+      updateFitEnabled();
+    }, { once:true });
+    jdPasteArea.insertAdjacentElement('afterend', back);
+    jdPasteArea.focus();
+  });
+  jdPasteArea.addEventListener('input', () => {
+    state.jdText = jdPasteArea.value;
+    // typing text and a previously-uploaded photo are mutually exclusive inputs
+    if(state.jdText.trim().length > 0){
+      state.jdBase64 = '';
+      state.jdMediaType = '';
+      jdPreview.hidden = true;
+      jdFileName.textContent = '';
+    }
+    jdDrop.classList.toggle('filled', state.jdText.trim().length > 20);
+    updateFitEnabled();
+  });
+
+  // ---------- Fit ----------
+  fitBtn.addEventListener('click', fitResume);
+
+  const QUOTES = [
+    'A perfectly-fitted resume still needs someone bold enough to send it.',
+    'The safe application and the sent application are never the same one.',
+    'Every rewritten line is a small bet on yourself.',
+    'Nobody was ever overqualified for a job they never applied to.',
+    'Fit the resume to the role. Then let the role decide.',
+    'The best time to apply was yesterday. The second best is right after this loads.',
+    'Confidence reads as competence more often than competence does.',
+    'A tailored resume is just honesty, arranged well.',
+    'Rejection is just a fast no on the way to a slow yes.',
+    "You don't need to be the best candidate. You need to be the clearest one.",
+    "The job you're scared to apply for is usually the one worth applying for.",
+    "Nobody hires the potential they can't see on paper.",
+    'A resume doesn\u2019t get you the job. It gets you the conversation.',
+    'Every "no" costs you five minutes. Every "yes" changes your year.',
+    'Stop polishing. Start sending.',
+    'The gap in your resume matters less than the gap in your effort.',
+    "You're one well-placed sentence away from a callback.",
+    'Ambition looks a lot like updating your resume on a Tuesday night.',
+    'The version of you that gets hired is the version that applied.',
+    'A closed door is just an unopened one with worse manners.',
+    'Ten tailored applications beat a hundred generic ones.',
+    "Your next job is being decided by someone who hasn't read your resume yet.",
+    'Momentum starts with one submitted application, not ten planned ones.',
+    'Most people lose the job before the interview — in the resume.',
+    'Being ready and being finished are two different things. Send it anyway.',
+    'What feels like oversharing to you reads as detail to a recruiter.',
+    "The role you're \u201Cnot quite qualified for\u201D is where growth lives.",
+    'Careers change direction one sent application at a time.',
+    "If the job posting excites you, that's the whole qualification you need to start.",
+    'Recruiters skim. Make the first line worth stopping for.',
+    "Comfort zones don't come with health insurance.",
+    'The best resume is the one that actually reaches someone\u2019s desk.',
+    "You're not behind. You're just about to apply.",
+    'Doubt is quiet. A submitted application is loud.',
+    'Every senior title once belonged to someone applying for their first real shot.',
+    "Nobody remembers the version of your resume you didn't send.",
+    "Your CV doesn't need to impress everyone. Just the one person reading it today.",
+    'The job market rewards the people still in it.',
+    'Perfect is the enemy of submitted.',
+    'This is the resume that gets the interview. Send it.'
+  ];
+
+  // Permanent rotating quote panel beside the wizard — independent of the
+  // loading-screen quote rotation, runs continuously from page load.
+  const motivationQuote = document.getElementById('motivationQuote');
+  const motivationProgressFill = document.getElementById('motivationProgressFill');
+  if(motivationQuote){
+    const motivationOrder = QUOTES.slice().sort(() => Math.random() - 0.5);
+    let mi = 0;
+    const MOTIVATION_CYCLE = 3200;
+    motivationQuote.textContent = motivationOrder[0];
+
+    function restartMotivationProgress(){
+      if(!motivationProgressFill) return;
+      motivationProgressFill.style.transition = 'none';
+      motivationProgressFill.style.width = '0%';
+      void motivationProgressFill.offsetWidth; // force reflow so the next transition replays
+      motivationProgressFill.style.transition = 'width ' + MOTIVATION_CYCLE + 'ms linear';
+      motivationProgressFill.style.width = '100%';
+    }
+    restartMotivationProgress();
+
+    setInterval(() => {
+      mi = (mi + 1) % motivationOrder.length;
+      motivationQuote.classList.add('swap-out');
+      setTimeout(() => {
+        motivationQuote.textContent = motivationOrder[mi];
+        motivationQuote.classList.remove('swap-out');
+        restartMotivationProgress();
+      }, 320);
+    }, MOTIVATION_CYCLE);
+  }
+
+  const tStep1 = document.getElementById('tStep1');
+  const tStep2 = document.getElementById('tStep2');
+  const tStep3 = document.getElementById('tStep3');
+  function setTracker(stage){
+    // stage: 'cut' | 'fit' | 'finish'
+    [tStep1, tStep2, tStep3].forEach(el => el.classList.remove('active','done'));
+    if(stage === 'cut'){ tStep1.classList.add('active'); }
+    if(stage === 'fit'){ tStep1.classList.add('done'); tStep2.classList.add('active'); }
+    if(stage === 'finish'){ tStep1.classList.add('done'); tStep2.classList.add('done'); tStep3.classList.add('active'); }
+  }
+
+  function showLoading(){
+    resultState.hidden = true;
+    loadingState.hidden = false;
+    openOverlay();
+    setTracker('fit');
+    tapeFill.style.width = '10%';
+    const msgs = ['Reading the job posting…','Comparing it to your resume…','Fitting the language to the role…'];
+    let i = 0;
+    loadingText.textContent = msgs[0];
+    tapeFill.style.width = '30%';
+    window._fitInterval = setInterval(() => {
+      i = (i+1) % msgs.length;
+      loadingText.textContent = msgs[i];
+      tapeFill.style.width = (30 + i*30) + '%';
+    }, 1800);
+
+    const quoteLine = document.getElementById('quoteLine');
+    const shuffled = QUOTES.slice().sort(() => Math.random() - 0.5);
+    let qi = 0;
+    quoteLine.textContent = shuffled[0];
+    window._quoteInterval = setInterval(() => {
+      qi = (qi+1) % shuffled.length;
+      quoteLine.style.opacity = '0';
+      setTimeout(() => {
+        quoteLine.textContent = shuffled[qi];
+        quoteLine.style.opacity = '1';
+      }, 250);
+    }, 3200);
+    quoteLine.style.transition = 'opacity .25s ease';
+  }
+  function stopLoading(){
+    clearInterval(window._fitInterval);
+    clearInterval(window._quoteInterval);
+    tapeFill.style.width = '100%';
+  }
+
+  const SUPABASE_URL = 'https://ypzxlsrbaxpxkmbpyyyr.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_lt3xqUoPNdljmeyQmIqdWg_UmmMT5Wf';
+
+  async function fitResume(){
+    clearError();
+    showLoading();
+    fitBtn.disabled = true;
+
+    const hasPhoto = !!state.jdBase64;
+    const body = {
+      cvText: state.cvText.slice(0, 6000),
+      jdBase64: hasPhoto ? state.jdBase64 : '',
+      jdMediaType: hasPhoto ? state.jdMediaType : '',
+      jdText: hasPhoto ? '' : state.jdText.slice(0, 4000)
+    };
+
+    let parsed = null;
+    let lastErr = null;
+    try{
+      const response = await fetch(SUPABASE_URL + '/functions/v1/fit-resume', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        },
+        body: JSON.stringify(body)
+      });
+      let data;
+      try{ data = await response.json(); }
+      catch(e){ throw new Error('BAD_RESPONSE: server sent HTTP ' + response.status + ' with no readable JSON'); }
+      if(data && data.error){
+        throw new Error(data.error);
+      }
+      parsed = data;
+    }catch(err){
+      lastErr = err;
+    }
+
+    if(parsed && parsed.input_valid === false){
+      stopLoading();
+      loadingState.hidden = true;
+      closeOverlay();
+      setTracker('cut');
+      fitBtn.disabled = false;
+      const reason = String(parsed.invalid_reason || '').trim();
+      showValidationModal(reason.length > 0 ? reason : "The resume or job posting you added doesn't look valid. Please check what you uploaded and try again.");
+      return;
+    }
+
+    if(parsed){
+      state.lastParsed = parsed;
+      stopLoading();
+      renderResult(parsed);
+      return;
+    }
+
+    console.error(lastErr);
+    stopLoading();
+    loadingState.hidden = true;
+    closeOverlay();
+    setTracker('cut');
+    fitBtn.disabled = false;
+    const raw = (lastErr && lastErr.message) ? lastErr.message : String(lastErr);
+    const low = raw.toLowerCase();
+    if(low.includes('truncated')){
+      showError("The AI's answer got cut off before it finished — usually happens with a longer resume or a job posting with a lot of text. Please try again; if it keeps happening, try a shorter CV PDF.");
+    }else if(low.includes('overloaded')){
+      showError("The AI service is busy right now — this already retried automatically. Please wait a minute and press \"Fit my resume\" again.");
+    }else if(low.includes('quota')){
+      showError("This app has hit its free usage limit for the moment. Please try again in a little while.");
+    }else if(low.includes('key:') || low.includes('missing gemini_api_key')){
+      showError("The service is temporarily unavailable. Please try again shortly.");
+    }else if(low.includes('failed to fetch') || low.includes('networkerror') || low.includes('load failed') || low.includes('network request failed')){
+      showError("Couldn't reach the server — check your internet connection and try again.");
+    }else{
+      showError("Couldn't fit this one. Please try again; if it keeps happening, screenshot this exact box and send it back: " + raw);
+    }
+  }
+
+  // ---------- Render ----------
+  function renderResult(parsed){
+    loadingState.hidden = true;
+    resultState.hidden = false;
+    outputOverlay.scrollTop = 0;
+    setTracker('finish');
+    fitBtn.disabled = false;
+
+    // tape gauge — before (original) and after (tailored) scores on one ruler
+    const gauge = document.getElementById('tapeGauge');
+    const before = Math.max(0, Math.min(100, Math.round(parsed.match_score || 0)));
+    const hasAfter = typeof parsed.tailored_score === 'number';
+    const after = hasAfter ? Math.max(0, Math.min(100, Math.round(parsed.tailored_score))) : null;
+    let html = '<div class="ruler"></div>';
+    for(let v=0; v<=100; v+=10){
+      html += '<div class="tick" style="left:' + v + '%"></div>';
+      html += '<div class="tick-label" style="left:' + v + '%">' + v + '</div>';
+    }
+    html += '<div class="pin before" id="pinBefore" style="left:0%"><span class="num" id="numBefore">0</span><span class="dot"></span></div>';
+    if(hasAfter){
+      html += '<div class="pin after" id="pinAfter" style="left:0%"><span class="num" id="numAfter">0</span><span class="dot"></span></div>';
+    }
+    gauge.innerHTML = html;
+
+    function animateNumber(el, target, duration){
+      const start = performance.now();
+      function tick(now){
+        const p = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(eased * target);
+        if(p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(() => {
+      document.getElementById('pinBefore').style.left = before + '%';
+      animateNumber(document.getElementById('numBefore'), before, 900);
+      if(hasAfter){
+        document.getElementById('pinAfter').style.left = after + '%';
+        animateNumber(document.getElementById('numAfter'), after, 1100);
+      }
+    });
+
+    const scoreLabel = document.querySelector('.score-label');
+    if(hasAfter){
+      const delta = after - before;
+      scoreLabel.innerHTML = 'Grey = your original resume · Brass = the fitted version below' +
+        (delta > 0 ? ' <span class="delta">+' + delta + '</span>' : '');
+    }else{
+      scoreLabel.textContent = 'Match to this job, before tailoring';
+    }
+
+    // keyword chips
+    const matchedChips = document.getElementById('matchedChips');
+    const missingChips = document.getElementById('missingChips');
+    matchedChips.innerHTML = (parsed.matched_keywords||[]).map((k,i) => '<span class="chip" style="animation-delay:' + (i*0.06) + 's">' + escapeHtml(k) + '</span>').join('') || '<span class="chip">—</span>';
+    missingChips.innerHTML = (parsed.missing_keywords||[]).map((k,i) => '<span class="chip" style="animation-delay:' + (i*0.06) + 's">' + escapeHtml(k) + '</span>').join('') || '<span class="chip">—</span>';
+
+    // template gallery + resume sheet, rendered via the reusable template engine
+    if(!state.selectedTemplate) state.selectedTemplate = 'classic';
+    renderTplGallery();
+    renderResumeSheet(parsed, state.selectedTemplate);
+  }
+
+  const TEMPLATES = [
+    {id:'classic', label:'Classic Centered'},
+    {id:'banner', label:'Elegant Banner'},
+    {id:'legal', label:'Minimal Legal'},
+    {id:'serif', label:'Warm Serif'},
+    {id:'band', label:'Header Band'},
+    {id:'photo-sidebar', label:'Photo Sidebar', photo:true, sidebar:true, bars:true},
+    {id:'bars', label:'Sidebar Bars', sidebar:true, bars:true},
+    {id:'photo-corner', label:'Photo Corner', photo:true},
+    {id:'ats', label:'Compact ATS'},
+    {id:'dark', label:'Dark Executive'}
+  ];
+  const SIDEBAR_TEMPLATES = ['photo-sidebar','bars'];
+  const PHOTO_TEMPLATES = ['photo-sidebar','photo-corner'];
+
+  function buildSectionsHTML(sections, useBars){
+    let html = '';
+    (sections || []).forEach(sec => {
+      html += '<h4>' + escapeHtml(sec.title || '') + '</h4>';
+      const content = sec.content || [];
+      if(sec.style === 'tags'){
+        if(useBars){
+          html += '<div class="rs-bars">' + content.map(s =>
+            '<div class="rs-bar-item"><span>' + escapeHtml(s) + '</span><div class="rs-bar-track"><div class="rs-bar-fill"></div></div></div>'
+          ).join('') + '</div>';
+        }else{
+          html += '<div class="rs-skills">' + content.map(s => '<span>' + escapeHtml(s) + '</span>').join('') + '</div>';
+        }
+      }else if(sec.style === 'bullets'){
+        html += '<ul>' + content.map(b => '<li>' + escapeHtml(String(b).replace(/^[\s•\-*·]+/, '')) + '</li>').join('') + '</ul>';
+      }else{
+        html += content.map(p => '<p class="rs-summary">' + escapeHtml(p) + '</p>').join('');
+      }
+    });
+    return html;
+  }
+
+  function photoHTML(shape){
+    if(!state.photoDataUrl) return '';
+    return '<img class="rs-photo ' + shape + '" src="' + state.photoDataUrl + '" alt="Profile photo" />';
+  }
+
+  function renderResumeSheet(parsed, templateId){
+    const sheet = document.getElementById('resumeSheet');
+    const r = (parsed && parsed.tailored_resume) || {};
+    const tpl = TEMPLATES.find(t => t.id === templateId) || TEMPLATES[0];
+    sheet.className = 'resume-sheet reveal-pop tpl-' + templateId;
+
+    if(SIDEBAR_TEMPLATES.indexOf(templateId) !== -1){
+      const sideSections = (r.sections || []).filter(s => s.style === 'tags');
+      const mainSections = (r.sections || []).filter(s => s.style !== 'tags');
+      const photo = tpl.photo ? photoHTML('rs-photo-circle') : '';
+      sheet.innerHTML =
+        '<div class="rs-head-strip">' + photo + '<div><h2>' + escapeHtml(r.headline || 'Tailored Resume') + '</h2></div></div>' +
+        '<div class="tpl-side">' + buildSectionsHTML(sideSections, !!tpl.bars) + '</div>' +
+        '<div class="tpl-main">' + buildSectionsHTML(mainSections, false) + '</div>';
+    }else if(templateId === 'photo-corner'){
+      sheet.innerHTML =
+        '<div class="tpl-corner-head">' + photoHTML('rs-photo-square') + '<h2>' + escapeHtml(r.headline || 'Tailored Resume') + '</h2></div>' +
+        buildSectionsHTML(r.sections, false);
+    }else{
+      sheet.innerHTML = '<h2>' + escapeHtml(r.headline || 'Tailored Resume') + '</h2>' + buildSectionsHTML(r.sections, false);
+    }
+    updateTplNote(templateId);
+  }
+
+  function updateTplNote(id){
+    const note = document.getElementById('tplNote');
+    if(id === 'dark'){
+      note.textContent = 'This one prints on plain white paper automatically — the dark look is for on-screen viewing.';
+      note.hidden = false;
+    }else if(id === 'ats'){
+      note.textContent = 'Plainest formatting on purpose — the safest bet if an employer\'s system auto-scans resumes.';
+      note.hidden = false;
+    }else if(id === 'photo-sidebar' || id === 'photo-corner'){
+      note.textContent = state.photoDataUrl
+        ? 'Using the photo you added in step 2.'
+        : 'No photo added — add one in step 2 if you want it here, or this template just runs without one.';
+      note.hidden = false;
+    }else if(id === 'bars'){
+      note.textContent = 'The bars are a visual style, not a claimed skill level — every skill gets the same fill.';
+      note.hidden = false;
+    }else{
+      note.hidden = true;
+    }
+  }
+
+  function renderTplGallery(){
+    const row = document.getElementById('tplRow');
+    row.innerHTML = TEMPLATES.map(t =>
+      '<button type="button" class="tpl-chip' + (t.id === state.selectedTemplate ? ' active' : '') + '" data-tpl="' + t.id + '">' + t.label + (t.photo ? ' 📷' : '') + '</button>'
+    ).join('');
+    Array.from(row.querySelectorAll('.tpl-chip')).forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.selectedTemplate = btn.getAttribute('data-tpl');
+        Array.from(row.querySelectorAll('.tpl-chip')).forEach(b => b.classList.toggle('active', b === btn));
+        renderResumeSheet(state.lastParsed, state.selectedTemplate);
+      });
+    });
+  }
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  // ---------- Actions ----------
+  document.getElementById('downloadBtn').addEventListener('click', () => window.print());
+
+  document.getElementById('copyBtn').addEventListener('click', () => {
+    const p = state.lastParsed;
+    if(!p) return;
+    const r = p.tailored_resume || {};
+    let text = (r.headline || '') + '\n\n';
+    (r.sections || []).forEach(sec => {
+      text += (sec.title || '').toUpperCase() + '\n';
+      const content = sec.content || [];
+      if(sec.style === 'tags'){
+        text += content.join(', ') + '\n\n';
+      }else if(sec.style === 'bullets'){
+        content.forEach(b => text += '  • ' + b + '\n');
+        text += '\n';
+      }else{
+        text += content.join('\n') + '\n\n';
+      }
+    });
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copyBtn');
+      const old = btn.textContent;
+      btn.textContent = 'Copied';
+      setTimeout(() => btn.textContent = old, 1500);
+    });
+  });
+
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    resultState.hidden = true;
+    closeOverlay();
+    setTracker('cut');
+    clearError();
+    showWizStep(2);
+  });
+
+})();
+</script>
+</body>
+</html>
