@@ -416,6 +416,31 @@
     font-size:12.5px; color:var(--ink-soft); margin:-10px 0 22px; font-style:italic;
   }
 
+  /* ---------- Cover letter & interview prep panels ---------- */
+  .extra-panel{
+    background:var(--bg-2); border:1px solid var(--line); border-radius:12px;
+    padding:24px 26px; margin-bottom:22px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.3);
+  }
+  .extra-panel-title{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase;
+    letter-spacing:.1em; color:var(--amber); margin:0 0 16px;
+  }
+  .cover-letter-text{
+    font-size:14px; line-height:1.75; color:var(--ink); white-space:pre-wrap;
+  }
+  .interview-item{
+    padding:14px 0; border-bottom:1px solid var(--line);
+  }
+  .interview-item:first-child{ padding-top:0; }
+  .interview-item:last-child{ border-bottom:none; padding-bottom:0; }
+  .interview-q{
+    font-size:14px; font-weight:600; color:var(--ink); margin:0 0 6px; line-height:1.5;
+  }
+  .interview-why{
+    font-size:12.5px; color:var(--ink-soft); margin:0; line-height:1.5;
+  }
+
   /* ---------- Output ---------- */
   .loading-state{padding:52px 24px; text-align:center;}
   .quote-wrap{
@@ -882,6 +907,20 @@
         <div class="actions reveal" style="animation-delay:.3s">
           <button id="downloadBtn" class="action-btn primary">Download as PDF</button>
           <button id="copyBtn" class="action-btn">Copy resume text</button>
+        </div>
+
+        <div class="extra-panel reveal" id="coverLetterPanel" style="animation-delay:.36s" hidden>
+          <p class="extra-panel-title">Cover Letter</p>
+          <div class="cover-letter-text" id="coverLetterText"></div>
+          <button type="button" class="action-btn" id="copyCoverBtn" style="margin-top:16px;">Copy cover letter</button>
+        </div>
+
+        <div class="extra-panel reveal" id="interviewPanel" style="animation-delay:.42s" hidden>
+          <p class="extra-panel-title">Likely Interview Questions</p>
+          <div class="interview-list" id="interviewList"></div>
+        </div>
+
+        <div class="actions reveal" style="animation-delay:.48s">
           <button id="restartBtn" class="action-btn">Start a new fit</button>
         </div>
       </div>
@@ -1511,7 +1550,41 @@
     if(!state.selectedTemplate) state.selectedTemplate = 'classic';
     renderTplGallery();
     renderResumeSheet(parsed, state.selectedTemplate);
+
+    // cover letter + interview prep — optional, only shown if the AI returned them
+    const coverLetterPanel = document.getElementById('coverLetterPanel');
+    const coverLetterText = document.getElementById('coverLetterText');
+    if(parsed.cover_letter && String(parsed.cover_letter).trim().length > 0){
+      coverLetterText.textContent = String(parsed.cover_letter).trim();
+      coverLetterPanel.hidden = false;
+    }else{
+      coverLetterPanel.hidden = true;
+    }
+
+    const interviewPanel = document.getElementById('interviewPanel');
+    const interviewList = document.getElementById('interviewList');
+    if(Array.isArray(parsed.interview_prep) && parsed.interview_prep.length > 0){
+      interviewList.innerHTML = parsed.interview_prep.map(item =>
+        '<div class="interview-item">' +
+          '<p class="interview-q">' + escapeHtml(item.question || '') + '</p>' +
+          (item.why_asked ? '<p class="interview-why">' + escapeHtml(item.why_asked) + '</p>' : '') +
+        '</div>'
+      ).join('');
+      interviewPanel.hidden = false;
+    }else{
+      interviewPanel.hidden = true;
+    }
   }
+
+  document.getElementById('copyCoverBtn').addEventListener('click', () => {
+    const text = document.getElementById('coverLetterText').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copyCoverBtn');
+      const old = btn.textContent;
+      btn.textContent = 'Copied';
+      setTimeout(() => btn.textContent = old, 1500);
+    });
+  });
 
   const TEMPLATES = [
     {id:'classic', label:'Classic Centered'},
